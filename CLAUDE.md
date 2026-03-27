@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-MiniMax AI 技能插件，为 Claude Code 提供 MiniMax 相关能力（语音合成、文生图、联网搜索、图片分析、用量查询）。
+MiniMax Token Plan Skills，为 Claude Code 提供 MiniMax Token Plan 相关能力（语音合成、文生图、联网搜索、图片分析、用量查询）。
 
 ## 开发环境
 

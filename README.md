@@ -1,4 +1,4 @@
-# MiniMax Skills for Claude Code
+# MiniMax Token Plan Skills
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/code)
 [![MiniMax](https://img.shields.io/badge/MiniMax-API-green)](https://www.minimaxi.com)
@@ -19,7 +19,7 @@ A collection of Claude Code skills for MiniMax Token Plan subscribers. Generate 
 
 ## Prerequisites
 
-- Python 3.x
+- [Bun](https://bun.sh) >= 1.0.0
 - MiniMax Token Plan subscription with API Key ([Get one here](https://www.minimaxi.com))
 
 ## Installation
@@ -27,13 +27,13 @@ A collection of Claude Code skills for MiniMax Token Plan subscribers. Generate 
 ### Global Installation (Available in all projects)
 
 ```bash
-ln -s /Users/meng/workspace/minimax-skills ~/.claude/skills/minimax-skills
+ln -s /Users/meng/workspace/minimax-token-plan-skills ~/.claude/skills/minimax-token-plan-skills
 ```
 
 ### Project-level Installation (Current project only)
 
 ```bash
-ln -s /Users/meng/workspace/minimax-skills /path/to/your/project/.claude/skills/minimax-skills
+ln -s /Users/meng/workspace/minimax-token-plan-skills /path/to/your/project/.claude/skills/minimax-token-plan-skills
 ```
 
 ## Configuration
@@ -91,27 +91,30 @@ Once installed, simply use natural language in Claude Code:
 ## Project Structure
 
 ```
-minimax-skills/
+minimax-token-plan-skills/
 ├── skills/
 │   ├── minimax-image/           # Image generation skill
 │   │   ├── scripts/
-│   │   │   └── generate_image.py
+│   │   │   └── generate.ts
 │   │   └── SKILL.md
 │   ├── minimax-speech/          # Text-to-speech skill
 │   │   ├── scripts/
+│   │   │   └── tts.ts
 │   │   └── SKILL.md
 │   ├── minimax-search/          # Web search skill
 │   │   ├── scripts/
-│   │   │   └── standalone_search.py
+│   │   │   └── search.ts
 │   │   └── SKILL.md
 │   ├── minimax-image-analysis/  # Image analysis skill
 │   │   ├── scripts/
-│   │   │   └── image_analysis.py
+│   │   │   └── analyze.ts
 │   │   └── SKILL.md
 │   └── minimax-usage/           # Usage query skill
 │       ├── scripts/
-│       │   └── query.sh
+│       │   └── query.ts
 │       └── SKILL.md
+├── package.json
+├── tsconfig.json
 ├── README.md
 └── README_CN.md                 # 中文文档
 ```
@@ -130,7 +133,7 @@ Generate high-quality images from text descriptions.
 
 **Example:**
 ```bash
-python skills/minimax-image/scripts/generate_image.py \
+bun run skills/minimax-image/scripts/generate.ts \
   "a serene mountain landscape at sunrise" \
   --aspect-ratio 16:9 \
   --prefix "mountain_sunrise_landscape"
@@ -176,10 +179,11 @@ Monitor your MiniMax Token Plan quota and usage.
 
 ### Code Formatting
 
-This project uses `ruff` for Python code formatting:
+This project uses TypeScript with strict type checking. No additional formatter required.
 
 ```bash
-ruff format skills/
+# Type check
+bun run tsc --noEmit
 ```
 
 ### Adding a New Skill
@@ -204,9 +208,9 @@ MiniMax Token Plan requires real-name authentication. Please complete the verifi
 
 ### Permission denied when running scripts
 
-Make scripts executable:
+Bun scripts don't need executable permissions, but if needed:
 ```bash
-chmod +x skills/*/scripts/*.py skills/*/scripts/*.sh
+chmod +x skills/*/scripts/*.ts
 ```
 
 ## Documentation
