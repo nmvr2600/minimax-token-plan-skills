@@ -222,16 +222,32 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
     Minimax Account Usage
 ================================
 
-Model: abab6.5s-chat
+Model: MiniMax-M*
 --------------------------------
-  Period:         2024-03-01 00:00 to 2024-03-31 23:59
-  Quota:          10000 requests
-  Used:           2345 requests (23.5%)
-  Remaining:      7655 requests
-  Resets In:      5d 12h 30m
+  Period:         2026/03/27 15:00 to 2026/03/27 20:00
+  Quota:          1500 requests
+  Used:           55 requests (3.7%)
+  Remaining:      1445 requests
+  Resets In:      0d 1h 19m
+
+Model: speech-hd
+--------------------------------
+  Period:         2026/03/27 00:00 to 2026/03/28 00:00
+  Quota:          9000 requests
+  Used:           761 requests (8.5%)
+  Remaining:      8239 requests
+  Resets In:      0d 5h 19m
+
+Model: image-01
+--------------------------------
+  Period:         2026/03/27 00:00 to 2026/03/28 00:00
+  Quota:          100 requests
+  Used:           6 requests (6.0%)
+  Remaining:      94 requests
+  Resets In:      0d 5h 19m
 
 ================================
-Query Time: 2024-03-25 14:30:00
+Query Time: 2026/03/27 18:40
 ================================
 ```
 
