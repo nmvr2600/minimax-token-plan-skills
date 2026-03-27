@@ -3,7 +3,9 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/code)
 [![MiniMax](https://img.shields.io/badge/MiniMax-API-green)](https://www.minimaxi.com)
 
-为 Claude Code 开发的 MiniMax AI 技能插件集合。通过自然语言命令，你可以生成图片、合成语音、搜索网络、分析图片，以及监控 API 用量。
+为 Claude Code 开发的 MiniMax Token Plan 技能插件集合。通过自然语言命令，你可以生成图片、合成语音、搜索网络、分析图片，以及监控 Token 用量。
+
+> **注意：** 使用这些技能需要有效的 MiniMax Token Plan 订阅。
 
 ## 功能特性
 
@@ -13,12 +15,12 @@
 | `minimax-speech` | 语音合成 TTS | "转成语音"、"生成音频"、"读这段文字" |
 | `minimax-search` | 联网搜索 | "搜索一下"、"查找"、"search for" |
 | `minimax-image-analysis` | 图片分析 / OCR | "分析图片"、"提取图中文字"、"describe this image" |
-| `minimax-usage` | 用量查询 | "查看用量"、"账户余额"、"check usage" |
+| `minimax-usage` | Token 用量查询 | "查看用量"、"Token 余额"、"check usage" |
 
 ## 前置要求
 
 - Python 3.x
-- MiniMax API Key ([在此获取](https://www.minimaxi.com))
+- MiniMax Token Plan 订阅及 API Key ([在此获取](https://www.minimaxi.com))
 
 ## 安装方式
 
@@ -36,7 +38,7 @@ ln -s /Users/meng/workspace/minimax-skills /你的项目路径/.claude/skills/mi
 
 ## 配置说明
 
-将 MiniMax API Key 设置为环境变量：
+将 MiniMax Token Plan API Key 设置为环境变量：
 
 ```bash
 export MINIMAX_API_KEY="your-api-key-here"
@@ -82,7 +84,7 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
 
 ### 用量查询
 ```
-"查看我的 MiniMax API 用量"
+"查看我的 MiniMax Token Plan 用量"
 "How much quota do I have left?"
 ```
 
@@ -165,13 +167,13 @@ python skills/minimax-image/scripts/generate_image.py \
 - OCR 文字提取
 - 视觉内容分析
 
-### minimax-usage（用量查询）
+### minimax-usage（Token 用量查询）
 
-监控 MiniMax API 用量和配额。
+监控 MiniMax Token Plan 的 Token 用量和配额。
 
 **特性：**
-- 查看各模型剩余配额
-- 用量统计
+- 查看各模型剩余 Token 配额
+- Token 消耗统计
 - 追踪计费周期
 
 ## 开发指南
@@ -202,7 +204,7 @@ export MINIMAX_API_KEY="your-api-key-here"
 
 ### 需要实名认证（错误码 2038）
 
-MiniMax API 需要实名认证。请在 MiniMax 账户后台完成实名认证。
+MiniMax Token Plan 需要实名认证。请在 MiniMax 账户后台完成实名认证。
 
 ### 运行脚本时权限不足
 
@@ -226,5 +228,5 @@ MIT License - 详见 [LICENSE](LICENSE) 文件。
 
 ## 致谢
 
-- 由 [MiniMax](https://www.minimaxi.com) AI API 提供支持
+- 由 [MiniMax Token Plan](https://www.minimaxi.com) 提供支持
 - 专为 [Claude Code](https://claude.ai/code) 构建

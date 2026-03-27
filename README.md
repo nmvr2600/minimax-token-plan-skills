@@ -3,7 +3,9 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/code)
 [![MiniMax](https://img.shields.io/badge/MiniMax-API-green)](https://www.minimaxi.com)
 
-A collection of Claude Code skills that integrate MiniMax AI capabilities into your workflow. Generate images, synthesize speech, search the web, analyze images, and monitor your API usage — all through natural language commands.
+A collection of Claude Code skills for MiniMax Token Plan subscribers. Generate images, synthesize speech, search the web, analyze images, and monitor your API quota — all through natural language commands.
+
+> **Note:** These skills require an active MiniMax Token Plan subscription.
 
 ## Features
 
@@ -13,12 +15,12 @@ A collection of Claude Code skills that integrate MiniMax AI capabilities into y
 | `minimax-speech` | Text-to-Speech (TTS) | "convert to speech", "generate audio", "read this text" |
 | `minimax-search` | Web Search | "search for", "look up", "find information" |
 | `minimax-image-analysis` | Image Analysis & OCR | "analyze image", "extract text from image", "describe this picture" |
-| `minimax-usage` | API Usage Query | "check usage", "account balance", "quota remaining" |
+| `minimax-usage` | Token Quota Query | "check usage", "token balance", "quota remaining" |
 
 ## Prerequisites
 
 - Python 3.x
-- MiniMax API Key ([Get one here](https://www.minimaxi.com))
+- MiniMax Token Plan subscription with API Key ([Get one here](https://www.minimaxi.com))
 
 ## Installation
 
@@ -36,7 +38,7 @@ ln -s /Users/meng/workspace/minimax-skills /path/to/your/project/.claude/skills/
 
 ## Configuration
 
-Set your MiniMax API Key as an environment variable:
+Set your MiniMax Token Plan API Key as an environment variable:
 
 ```bash
 export MINIMAX_API_KEY="your-api-key-here"
@@ -82,7 +84,7 @@ Once installed, simply use natural language in Claude Code:
 
 ### Usage Query
 ```
-"Check my MiniMax API usage"
+"Check my MiniMax Token Plan quota"
 "How much quota do I have left?"
 ```
 
@@ -163,11 +165,11 @@ Analyze images and extract information.
 
 ### minimax-usage
 
-Monitor your MiniMax API quota and usage.
+Monitor your MiniMax Token Plan quota and usage.
 
 **Features:**
-- Check remaining quota for each model
-- View usage statistics
+- Check remaining token quota for each model
+- View token consumption statistics
 - Track billing cycle
 
 ## Development
@@ -198,7 +200,7 @@ export MINIMAX_API_KEY="your-api-key-here"
 
 ### Real-name authentication required (Error 2038)
 
-MiniMax API requires real-name authentication. Please complete the verification in your MiniMax account dashboard.
+MiniMax Token Plan requires real-name authentication. Please complete the verification in your MiniMax account dashboard.
 
 ### Permission denied when running scripts
 
@@ -222,5 +224,5 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Acknowledgments
 
-- Powered by [MiniMax](https://www.minimaxi.com) AI API
+- Powered by [MiniMax Token Plan](https://www.minimaxi.com)
 - Built for [Claude Code](https://claude.ai/code)
