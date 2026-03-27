@@ -2,10 +2,14 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
-# Generated images
+# Generated images (allow samples directory)
 *.jpeg
 *.jpg
 *.png
 *.gif
 *.mp3
 *.mp4
+!samples/*.jpeg
+!samples/*.jpg
+!samples/*.png
+!samples/*.mp3
