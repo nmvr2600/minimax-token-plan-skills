@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 Minimax Image01 文生图脚本
-用法: python generate_image.py "prompt文本" [--aspect-ratio 16:9] [--output-dir .]
+用法: python generate_image.py "prompt文本" [--aspect-ratio 16:9] [--output-dir .] [--prefix cat_flying]
 """
 
 import base64
 import argparse
 import os
 import sys
+import time
 import requests
 from pathlib import Path
 
@@ -20,6 +21,7 @@ def generate_image(
     output_dir: str = ".",
     response_format: str = "base64",
     n: int = 1,
+    filename_prefix: str = None,
 ) -> list[str]:
     """
     调用 Minimax Image01 API 生成图片
@@ -32,11 +34,14 @@ def generate_image(
         output_dir: 输出目录
         response_format: 返回格式，base64 或 url
         n: 生成数量，1-9
+        filename_prefix: 文件名前缀（由调用者提供）
 
     Returns:
         图片路径列表
     """
-    url = "https://api.minimaxi.com/v1/image_generation"
+    # 支持通过环境变量切换域名（中文站/国际站）
+    api_host = os.getenv("MINIMAX_API_HOST", "https://api.minimaxi.com")
+    url = f"{api_host}/v1/image_generation"
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     payload = {
@@ -56,11 +61,22 @@ def generate_image(
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
+    # 生成文件名前缀
+    timestamp = int(time.time())
+    if filename_prefix:
+        base_name = filename_prefix
+    else:
+        base_name = f"image_{timestamp}"
+
     if response_format == "base64":
         images = data["data"]["image_base64"]
         for i, img_b64 in enumerate(images):
             img_data = base64.b64decode(img_b64)
-            file_path = output_path / f"image_{i}.jpeg"
+            # 单张时不加序号，多张时加 _0, _1, _2...
+            if n == 1:
+                file_path = output_path / f"{base_name}.jpeg"
+            else:
+                file_path = output_path / f"{base_name}_{i}.jpeg"
             with open(file_path, "wb") as f:
                 f.write(img_data)
             output_paths.append(str(file_path))
@@ -68,7 +84,10 @@ def generate_image(
     else:  # url
         images = data["data"]["image_urls"]
         for i, img_url in enumerate(images):
-            file_path = output_path / f"image_{i}.jpeg"
+            if n == 1:
+                file_path = output_path / f"{base_name}.jpeg"
+            else:
+                file_path = output_path / f"{base_name}_{i}.jpeg"
             # 下载图片
             img_response = requests.get(img_url)
             img_response.raise_for_status()
@@ -84,8 +103,8 @@ def main():
     # 检查 API 密钥
     api_key = os.environ.get("MINIMAX_API_KEY")
     if not api_key:
-        print("错误: 未设置 MINIMAX_API_KEY 环境变量", file=sys.stderr)
-        print("请先设置: export MINIMAX_API_KEY='your_api_key'", file=sys.stderr)
+        print("Error: MINIMAX_API_KEY environment variable is not set", file=sys.stderr)
+        print("Please run: export MINIMAX_API_KEY='your_api_key'", file=sys.stderr)
         sys.exit(1)
 
     parser = argparse.ArgumentParser(description="Minimax Image01 文生图")
@@ -107,6 +126,11 @@ def main():
         help="返回格式: base64 或 url (默认 base64)",
     )
     parser.add_argument("--n", "-n", type=int, default=1, help="生成数量 1-9 (默认 1)")
+    parser.add_argument(
+        "--prefix",
+        "-p",
+        help="文件名前缀，由调用者指定有意义的名称",
+    )
 
     args = parser.parse_args()
 
@@ -118,6 +142,7 @@ def main():
             output_dir=args.output_dir,
             response_format=args.format,
             n=args.n,
+            filename_prefix=args.prefix,
         )
         print(f"\n成功! 共生成 {len(paths)} 张图片")
     except Exception as e:
