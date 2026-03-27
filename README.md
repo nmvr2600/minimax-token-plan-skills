@@ -56,7 +56,12 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # Alternative
 
 ## Usage Examples
 
-Once installed, simply use natural language in Claude Code, or run the scripts directly:
+Once installed, you can use these skills in two ways:
+
+1. **Natural Language** - Just describe what you want in Claude Code
+2. **Slash Commands** - Use `/skill-name` for direct access
+
+> **Note:** Direct script execution (`bun run skills/...`) is also supported but primarily intended for Claude Code internal use.
 
 ### Image Generation (minimax-image)
 
@@ -68,20 +73,16 @@ Generate high-quality images from text descriptions.
 "Generate an image of a cat flying through space"
 ```
 
-**Direct script usage:**
-```bash
-# Basic usage - 1:1 square image
-bun run skills/minimax-image/scripts/generate.ts "a cute cat sitting on a windowsill"
-
-# Specify aspect ratio (16:9 for desktop wallpaper)
-bun run skills/minimax-image/scripts/generate.ts "futuristic city skyline" --aspect-ratio 16:9
-
-# Batch generate 4 images
-bun run skills/minimax-image/scripts/generate.ts "dreamy forest scene" -n 4 --output-dir ./outputs
-
-# Custom filename prefix
-bun run skills/minimax-image/scripts/generate.ts "sunset over mountains" --prefix "mountain_sunset"
+**Slash command:**
 ```
+/minimax-image "futuristic city skyline at night, cyberpunk style, neon lights"
+```
+
+**Parameters:**
+- `--aspect-ratio` or `-r`: Aspect ratio (1:1, 16:9, 9:16, 4:3, 3:4, 3:2, 2:3, 21:9)
+- `--n`: Number of images (1-9)
+- `--output-dir` or `-o`: Output directory
+- `--prefix` or `-p`: Filename prefix
 
 **Supported aspect ratios:** `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`
 
@@ -103,23 +104,17 @@ Convert text to natural-sounding speech using MiniMax's async TTS API.
 "Read this text aloud with a gentle female voice"
 ```
 
-**Direct script usage:**
-```bash
-# Basic usage with default voice (female-tianmei)
-bun run skills/minimax-speech/scripts/tts.ts "Welcome to our service!"
-
-# Specify voice and output file
-bun run skills/minimax-speech/scripts/tts.ts "Chapter 1: The beginning of the story" \
-  --voice female-yujie \
-  --output story_chapter_1.mp3
-
-# Adjust speed and volume
-bun run skills/minimax-speech/scripts/tts.ts "Emergency announcement" \
-  --voice male-qn-qingse \
-  --speed 1.2 \
-  --vol 8 \
-  --output announcement.mp3
+**Slash command:**
 ```
+/minimax-speech "Chapter 1: The beginning of the story" --voice female-yujie --output story_chapter_1.mp3
+```
+
+**Parameters:**
+- `--voice` or `-v`: Voice ID (female-tianmei, female-yujie, male-qn-qingse, etc.)
+- `--speed` or `-s`: Speech speed 0.5-2.0
+- `--vol`: Volume 0-10
+- `--pitch` or `-p`: Pitch 0.5-2.0
+- `--output` or `-o`: Output filename
 
 **Available voices:**
 - `female-tianmei` - Sweet female voice (default)
@@ -149,13 +144,9 @@ Search the web for real-time information.
 "Look up information about quantum computing"
 ```
 
-**Direct script usage:**
-```bash
-# Basic search
-bun run skills/minimax-search/scripts/search.ts "Python best practices"
-
-# Search returns JSON with organic results and related searches
-bun run skills/minimax-search/scripts/search.ts "2024 AI trends"
+**Slash command:**
+```
+/minimax-search "Python best practices 2024"
 ```
 
 **Output format:**
@@ -186,23 +177,17 @@ Analyze images and extract information including OCR.
 "What does this chart show?"
 ```
 
-**Direct script usage:**
-```bash
-# Analyze with default prompt (comprehensive analysis + OCR)
-bun run skills/minimax-image-analysis/scripts/analyze.ts "photo.jpg"
-
-# Extract text only
-bun run skills/minimax-image-analysis/scripts/analyze.ts "document.jpg" "Extract all text from this image"
-
-# Analyze UI screenshot
-bun run skills/minimax-image-analysis/scripts/analyze.ts "screenshot.png" "Describe this interface and its features"
-
-# Analyze chart/data visualization
-bun run skills/minimax-image-analysis/scripts/analyze.ts "chart.png" "Analyze the data trends in this chart"
-
-# Use URL instead of local file
-bun run skills/minimax-image-analysis/scripts/analyze.ts "https://example.com/image.jpg"
+**Slash command:**
 ```
+/minimax-image-analysis "screenshot.png" "Describe this interface and its features"
+/minimax-image-analysis "https://example.com/image.jpg"
+```
+
+**Parameters:**
+- First argument: Image path or URL
+- Second argument (optional): Custom analysis prompt
+
+**Supported formats:** JPEG, PNG, WebP (max 10MB)
 
 **Supported formats:** JPEG, PNG, WebP (max 10MB)
 
@@ -216,10 +201,9 @@ Monitor your MiniMax Token Plan quota and usage.
 "How much quota do I have left?"
 ```
 
-**Direct script usage:**
-```bash
-# Check usage for all models
-bun run skills/minimax-usage/scripts/query.ts
+**Slash command:**
+```
+/minimax-usage
 ```
 
 **Sample output:**
@@ -239,18 +223,6 @@ Model: abab6.5s-chat
 ================================
 Query Time: 2024-03-25 14:30:00
 ================================
-```
-
-## Shortcut Commands
-
-You can also use the shortcut commands defined in `package.json`:
-
-```bash
-bun run image "a cute cat"              # Image generation
-bun run tts "Hello world"               # Text-to-speech
-bun run search "AI news"                # Web search
-bun run analyze "photo.jpg"             # Image analysis
-bun run usage                           # Usage query
 ```
 
 ## Troubleshooting

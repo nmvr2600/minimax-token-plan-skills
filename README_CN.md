@@ -56,7 +56,12 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
 
 ## 使用示例
 
-安装完成后，在 Claude Code 中使用自然语言，或直接运行脚本：
+安装完成后，你可以通过两种方式使用这些技能：
+
+1. **自然语言** - 直接在 Claude Code 中描述你想要什么
+2. **斜杠命令** - 使用 `/skill-name` 直接调用
+
+> **注意：** 直接运行脚本（`bun run skills/...`）也支持，但主要供 Claude Code 内部使用。
 
 ### 图片生成（minimax-image）
 
@@ -68,20 +73,16 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
 "生成一张太空飞猫的图片"
 ```
 
-**直接运行脚本：**
-```bash
-# 基本用法 - 生成 1:1 正方形图片
-bun run skills/minimax-image/scripts/generate.ts "窗台上坐着一只可爱的猫咪"
-
-# 指定宽高比（16:9 适合桌面壁纸）
-bun run skills/minimax-image/scripts/generate.ts "未来城市天际线" --aspect-ratio 16:9
-
-# 批量生成 4 张图片
-bun run skills/minimax-image/scripts/generate.ts "梦幻森林" -n 4 --output-dir ./outputs
-
-# 自定义文件名前缀
-bun run skills/minimax-image/scripts/generate.ts "日落山景" --prefix "mountain_sunset"
+**斜杠命令：**
 ```
+/minimax-image "未来城市天际线，赛博朋克风格，霓虹灯" --aspect-ratio 16:9
+```
+
+**参数：**
+- `--aspect-ratio` 或 `-r`：宽高比（1:1、16:9、9:16、4:3、3:4、3:2、2:3、21:9）
+- `--n`：生成数量（1-9）
+- `--output-dir` 或 `-o`：输出目录
+- `--prefix` 或 `-p`：文件名前缀
 
 **支持的宽高比：** `1:1`、`16:9`、`9:16`、`4:3`、`3:4`、`3:2`、`2:3`、`21:9`
 
@@ -103,23 +104,17 @@ bun run skills/minimax-image/scripts/generate.ts "日落山景" --prefix "mounta
 "用温柔的女声读这段文字"
 ```
 
-**直接运行脚本：**
-```bash
-# 默认音色（female-tianmei 甜美女声）
-bun run skills/minimax-speech/scripts/tts.ts "欢迎使用我们的服务！"
-
-# 指定音色和输出文件
-bun run skills/minimax-speech/scripts/tts.ts "第一章：故事的开始" \
-  --voice female-yujie \
-  --output story_chapter_1.mp3
-
-# 调整语速和音量
-bun run skills/minimax-speech/scripts/tts.ts "紧急通知" \
-  --voice male-qn-qingse \
-  --speed 1.2 \
-  --vol 8 \
-  --output announcement.mp3
+**斜杠命令：**
 ```
+/minimax-speech "第一章：故事的开始" --voice female-yujie --output story_chapter_1.mp3
+```
+
+**参数：**
+- `--voice` 或 `-v`：音色ID（female-tianmei、female-yujie、male-qn-qingse 等）
+- `--speed` 或 `-s`：语速 0.5-2.0
+- `--vol`：音量 0-10
+- `--pitch` 或 `-p`：音调 0.5-2.0
+- `--output` 或 `-o`：输出文件名
 
 **可用音色：**
 - `female-tianmei` - 甜美女声（默认）
@@ -149,13 +144,9 @@ bun run skills/minimax-speech/scripts/tts.ts "紧急通知" \
 "查找量子计算相关资料"
 ```
 
-**直接运行脚本：**
-```bash
-# 基础搜索
-bun run skills/minimax-search/scripts/search.ts "Python 最佳实践"
-
-# 返回 JSON 格式的搜索结果和相关搜索推荐
-bun run skills/minimax-search/scripts/search.ts "2024 AI 趋势"
+**斜杠命令：**
+```
+/minimax-search "Python 最佳实践 2024"
 ```
 
 **输出格式：**
@@ -186,23 +177,15 @@ bun run skills/minimax-search/scripts/search.ts "2024 AI 趋势"
 "这个图表展示了什么数据？"
 ```
 
-**直接运行脚本：**
-```bash
-# 使用默认提示词（全面分析 + OCR）
-bun run skills/minimax-image-analysis/scripts/analyze.ts "照片.jpg"
-
-# 只提取文字
-bun run skills/minimax-image-analysis/scripts/analyze.ts "文档.jpg" "提取图中所有文字"
-
-# 分析 UI 截图
-bun run skills/minimax-image-analysis/scripts/analyze.ts "截图.png" "描述这个界面的功能"
-
-# 分析图表
-bun run skills/minimax-image-analysis/scripts/analyze.ts "图表.png" "分析这个图表的数据趋势"
-
-# 使用网络图片 URL
-bun run skills/minimax-image-analysis/scripts/analyze.ts "https://example.com/image.jpg"
+**斜杠命令：**
 ```
+/minimax-image-analysis "截图.png" "描述这个界面的功能"
+/minimax-image-analysis "https://example.com/image.jpg"
+```
+
+**参数：**
+- 第一个参数：图片路径或 URL
+- 第二个参数（可选）：自定义分析提示词
 
 **支持的格式：** JPEG、PNG、WebP（最大 10MB）
 
@@ -216,10 +199,9 @@ bun run skills/minimax-image-analysis/scripts/analyze.ts "https://example.com/im
 "还剩多少额度？"
 ```
 
-**直接运行脚本：**
-```bash
-# 查询所有模型的用量
-bun run skills/minimax-usage/scripts/query.ts
+**斜杠命令：**
+```
+/minimax-usage
 ```
 
 **示例输出：**
@@ -239,18 +221,6 @@ Model: abab6.5s-chat
 ================================
 Query Time: 2024-03-25 14:30:00
 ================================
-```
-
-## 快捷命令
-
-也可以使用 package.json 中定义的快捷命令：
-
-```bash
-bun run image "可爱的猫咪"              # 图片生成
-bun run tts "你好世界"                  # 语音合成
-bun run search "AI 新闻"                # 联网搜索
-bun run analyze "照片.jpg"              # 图片分析
-bun run usage                           # 用量查询
 ```
 
 ## 常见问题
