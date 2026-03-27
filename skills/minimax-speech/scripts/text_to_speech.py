@@ -14,15 +14,29 @@ import argparse
 
 
 def create_speech_task(
-    api_key: str, api_host: str, text: str, voice_id: str, model: str
+    api_key: str,
+    api_host: str,
+    text: str,
+    voice_id: str,
+    model: str,
+    speed: float = 1.0,
+    vol: int = 10,
+    pitch: float = 1.0,
 ) -> str:
     """创建语音合成任务"""
     url = f"{api_host}/v1/t2a_async_v2"
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+    # API 对参数类型敏感，确保使用正确的类型
     payload = {
         "model": model,
         "text": text,
-        "voice_setting": {"voice_id": voice_id, "speed": 1.0, "vol": 10, "pitch": 1},
+        "voice_setting": {
+            "voice_id": voice_id,
+            "speed": int(speed) if speed == int(speed) else float(speed),
+            "vol": int(vol),
+            "pitch": int(pitch) if pitch == int(pitch) else float(pitch),
+        },
         "audio_setting": {
             "audio_sample_rate": 32000,
             "bitrate": 128000,
@@ -73,6 +87,9 @@ def text_to_speech(
     output_file: str = "output.mp3",
     voice_id: str = "female-tianmei",
     model: str = "speech-2.8-hd",
+    speed: float = 1.0,
+    vol: int = 10,
+    pitch: float = 1.0,
     api_key: str = None,
     api_host: str = None,
 ) -> str:
@@ -84,6 +101,9 @@ def text_to_speech(
         output_file: 输出文件路径
         voice_id: 音色ID
         model: 语音模型
+        speed: 语速 0.5-2.0
+        vol: 音量 0-10
+        pitch: 音调 0.5-2.0
         api_key: API Key（默认从环境变量获取）
         api_host: API 主机地址（默认从环境变量获取）
 
@@ -103,7 +123,9 @@ def text_to_speech(
         raise ValueError(f"文本过长: {len(text)} 字符，最大支持 10 万字符")
 
     print(f"🎙️ 正在创建语音合成任务...")
-    task_id = create_speech_task(api_key, api_host, text, voice_id, model)
+    task_id = create_speech_task(
+        api_key, api_host, text, voice_id, model, speed, vol, pitch
+    )
     print(f"✓ 任务已创建: {task_id}")
 
     # 轮询等待任务完成
@@ -142,6 +164,13 @@ def main():
     parser.add_argument(
         "-m", "--model", default="speech-2.8-hd", help="语音模型 (默认: speech-2.8-hd)"
     )
+    parser.add_argument(
+        "-s", "--speed", type=float, default=1.0, help="语速 0.5-2.0 (默认: 1.0)"
+    )
+    parser.add_argument("--vol", type=int, default=10, help="音量 0-10 (默认: 10)")
+    parser.add_argument(
+        "-p", "--pitch", type=float, default=1.0, help="音调 0.5-2.0 (默认: 1.0)"
+    )
 
     args = parser.parse_args()
 
@@ -151,6 +180,9 @@ def main():
             output_file=args.output,
             voice_id=args.voice,
             model=args.model,
+            speed=args.speed,
+            vol=args.vol,
+            pitch=args.pitch,
         )
     except Exception as e:
         print(f"❌ 错误: {e}", file=sys.stderr)
