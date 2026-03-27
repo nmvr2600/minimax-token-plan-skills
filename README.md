@@ -1,7 +1,7 @@
 # MiniMax Token Plan Skills
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/code)
-[![MiniMax](https://img.shields.io/badge/MiniMax-API-green)](https://www.minimaxi.com)
+[![MiniMax](https://img.shields.io/badge/MiniMax-API-green)](https://platform.minimaxi.com/subscribe/token-plan?code=4GTLFBzZjv&source=link)
 
 [English](README.md) | [中文](README_CN.md)
 
@@ -22,7 +22,7 @@ A collection of Claude Code skills for MiniMax Token Plan subscribers. Generate 
 ## Prerequisites
 
 - [Bun](https://bun.sh) >= 1.0.0
-- MiniMax Token Plan subscription with API Key ([Get one here](https://www.minimaxi.com))
+- MiniMax Token Plan subscription with API Key ([Get one here](https://platform.minimaxi.com/subscribe/token-plan?code=4GTLFBzZjv&source=link))
 
 ## Installation
 
@@ -249,5 +249,5 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Acknowledgments
 
-- Powered by [MiniMax Token Plan](https://www.minimaxi.com)
+- Powered by [MiniMax Token Plan](https://platform.minimaxi.com/subscribe/token-plan?code=4GTLFBzZjv&source=link)
 - Built for [Claude Code](https://claude.ai/code)
