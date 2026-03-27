@@ -1,9 +1,6 @@
 ---
 name: minimax-usage
-description: |
-  查询 MiniMax API 账户余额和用量配额。在执行大批量 API 调用前、监控账户配额、
-  避免超额使用或排查 API 调用失败时，务必使用此 skill。
-  当用户询问"还剩多少额度"、"查看用量"、"检查配额"、"账户余额"时触发。
+description: 当用户询问"还剩多少额度"、"查看用量"、"检查配额"、"账户余额"，或需要查询 MiniMax API 账户余额和用量配额时触发。
 allowed-tools: Bash(curl:*) Bash(jq:*)
 model: haiku
 ---

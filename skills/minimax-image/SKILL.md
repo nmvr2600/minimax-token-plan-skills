@@ -1,10 +1,6 @@
 ---
 name: minimax-image
-description: |
-  使用 MiniMax Image01 API 进行文生图和图生图创作。当用户需要 AI 生成图片时说
-  "画一张图"、"生成图片"、"文生图"、"用 AI 画图"、"create an image"、
-  "generate a picture"或提到 "Minimax 图片生成"时触发。支持保持人物/物体一致性
-  的图生图功能。
+description: 当用户需要 AI 生成图片时说"画一张图"、"生成图片"、"文生图"、"用 AI 画图"、"create an image"、"generate a picture"或提到"Minimax 图片生成"时触发。
 ---
 
 # MiniMax Image 文生图技能

@@ -1,9 +1,6 @@
 ---
 name: minimax-speech
-description: |
-  使用 MiniMax 语音合成 API 将文本转换为语音（TTS）。当用户需要将文字转为语音、
-  生成音频文件、语音合成、text to speech、TTS，或说"把这段文字转成语音"、
-  "生成一个音频"、"读一下这段文字"时触发。支持 40+ 种语言和 300+ 音色。
+description: 当用户需要将文字转为语音、生成音频文件、语音合成、text to speech、TTS，或说"把这段文字转成语音"、"生成一个音频"、"读一下这段文字"时触发。
 ---
 
 # MiniMax Speech Synthesis

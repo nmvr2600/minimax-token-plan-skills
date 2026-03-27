@@ -1,10 +1,6 @@
 ---
 name: minimax-search
-description: |
-  使用 MiniMax 联网搜索 API 进行网页搜索。当用户需要搜索网络信息、
-  查找最新资料、查询实时信息、或说"搜索一下"、"查一下"、"联网搜索"、
-  "web search"、"search for"时触发。此 skill 无需第三方依赖，使用 Python
-  标准库即可运行。
+description: 当用户需要搜索网络信息、查找最新资料、查询实时信息、或说"搜索一下"、"查一下"、"联网搜索"、"web search"、"search for"时触发。
 ---
 
 # MiniMax Web Search
