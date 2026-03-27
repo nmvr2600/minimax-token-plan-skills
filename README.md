@@ -3,6 +3,8 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/code)
 [![MiniMax](https://img.shields.io/badge/MiniMax-API-green)](https://www.minimaxi.com)
 
+[English](README.md) | [中文](README_CN.md)
+
 A collection of Claude Code skills for MiniMax Token Plan subscribers. Generate images, synthesize speech, search the web, analyze images, and monitor your API quota — all through natural language commands.
 
 > **Note:** These skills require an active MiniMax Token Plan subscription.
@@ -244,11 +246,6 @@ Install Bun first:
 ```bash
 curl -fsSL https://bun.sh/install | bash
 ```
-
-## Documentation
-
-- [English Documentation](README.md) (This file)
-- [中文文档](README_CN.md)
 
 ## License
 
