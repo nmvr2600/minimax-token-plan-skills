@@ -1,3 +1,11 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Generated images
+*.jpeg
+*.jpg
+*.png
+*.gif
+*.mp3
+*.mp4
