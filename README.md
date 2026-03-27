@@ -92,9 +92,9 @@ Generate high-quality images from text descriptions.
 
 | Prompt | Output |
 |--------|--------|
-| "a cat flying through space, comic style" | ![Cat Flying](samples/cat_flying_space_comic.jpeg) |
-| "cute cat poses, multiple angles" | ![Cute Cats](samples/cute_cat_poses_0.jpeg) |
-| "herdsman pointing to Xinghua village, traditional Chinese ink wash painting style" | ![Ink Wash](samples/herdsman_pointing_xinghua_village_ink_wash.jpeg) |
+| "a cat flying through space, comic style" | ![Cat Flying](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/cat_flying_space_comic.jpeg) |
+| "cute cat poses, multiple angles" | ![Cute Cats](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/cute_cat_poses_0.jpeg) |
+| "herdsman pointing to Xinghua village, traditional Chinese ink wash painting style" | ![Ink Wash](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/herdsman_pointing_xinghua_village_ink_wash.jpeg) |
 
 ### Text-to-Speech (minimax-speech)
 

@@ -92,9 +92,9 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
 
 | 提示词 | 输出 |
 |--------|------|
-| "a cat flying through space, comic style" | ![太空飞猫](samples/cat_flying_space_comic.jpeg) |
-| "cute cat poses, multiple angles" | ![可爱猫咪](samples/cute_cat_poses_0.jpeg) |
-| "牧童遥指杏花村，中国传统水墨画风格" | ![水墨画](samples/herdsman_pointing_xinghua_village_ink_wash.jpeg) |
+| "a cat flying through space, comic style" | ![太空飞猫](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/cat_flying_space_comic.jpeg) |
+| "cute cat poses, multiple angles" | ![可爱猫咪](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/cute_cat_poses_0.jpeg) |
+| "牧童遥指杏花村，中国传统水墨画风格" | ![水墨画](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/herdsman_pointing_xinghua_village_ink_wash.jpeg) |
 
 ### 语音合成（minimax-speech）
 
