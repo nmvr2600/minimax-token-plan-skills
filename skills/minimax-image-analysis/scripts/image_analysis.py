@@ -62,7 +62,7 @@ def get_config():
     api_host = os.getenv("MINIMAX_API_HOST", "https://api.minimax.chat")
 
     if not api_key:
-        raise MinimaxRequestError("MINIMAX_API_KEY 环境变量未设置")
+        raise MinimaxRequestError("MINIMAX_API_KEY environment variable is not set")
 
     return api_key, api_host
 
@@ -269,7 +269,7 @@ def main():
         print(f"用法: {sys.argv[0]} <图像路径或URL> [提示词]", file=sys.stderr)
         print(f'示例: {sys.argv[0]} "photo.jpg"', file=sys.stderr)
         print(f'示例: {sys.argv[0]} "photo.jpg" "描述这张图片"', file=sys.stderr)
-        print(f"（不传提示词时使用默认全面分析提示词）", file=sys.stderr)
+        print("（不传提示词时使用默认全面分析提示词）", file=sys.stderr)
         sys.exit(1)
 
     image_source = sys.argv[1]

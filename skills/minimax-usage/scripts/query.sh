@@ -1,11 +1,15 @@
 #!/bin/bash
 
 if [ -z "$MINIMAX_API_KEY" ]; then
-    echo "Error: MINIMAX_API_KEY environment variable is not set"
+    echo "Error: MINIMAX_API_KEY environment variable is not set" >&2
+    echo "Please run: export MINIMAX_API_KEY='your_api_key'" >&2
     exit 1
 fi
 
-response=$(curl -s --location 'https://www.minimaxi.com/v1/api/openplatform/coding_plan/remains' \
+# 支持通过环境变量切换域名（中文站/国际站）
+MINIMAX_API_HOST="${MINIMAX_API_HOST:-https://www.minimaxi.com}"
+
+response=$(curl -s --location "${MINIMAX_API_HOST}/v1/api/openplatform/coding_plan/remains" \
     --header "Authorization: Bearer $MINIMAX_API_KEY" \
     --header 'Content-Type: application/json')
 
@@ -34,7 +38,11 @@ echo "$response" | jq -c '.model_remains[]' | while read -r model; do
     end_ts=$(echo "$model" | jq -r '.end_time')
 
     used=$((total - remaining))
-    usage_percent=$(awk "BEGIN {printf \"%.1f\", ($used/$total)*100}")
+    if [ "$total" -eq 0 ]; then
+        usage_percent="0.0"
+    else
+        usage_percent=$(awk "BEGIN {printf \"%.1f\", ($used/$total)*100}")
+    fi
 
     start_date=$(date -r $((start_ts / 1000)) "+%Y-%m-%d %H:%M" 2>/dev/null || date -d @$((start_ts / 1000)) "+%Y-%m-%d %H:%M")
     end_date=$(date -r $((end_ts / 1000)) "+%Y-%m-%d %H:%M" 2>/dev/null || date -d @$((end_ts / 1000)) "+%Y-%m-%d %H:%M")

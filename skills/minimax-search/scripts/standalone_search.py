@@ -38,7 +38,7 @@ def get_config():
     api_host = os.getenv("MINIMAX_API_HOST", "https://api.minimaxi.com")
 
     if not api_key:
-        raise MinimaxRequestError("MINIMAX_API_KEY 环境变量未设置")
+        raise MinimaxRequestError("MINIMAX_API_KEY environment variable is not set")
 
     return api_key, api_host
 
