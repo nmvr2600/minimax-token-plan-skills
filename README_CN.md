@@ -40,20 +40,20 @@ ln -s /Users/meng/workspace/minimax-token-plan-skills /你的项目路径/.claud
 
 ## 配置说明
 
-将 MiniMax Token Plan API Key 设置为环境变量：
+### 必需：API Key
+
+设置你的 MiniMax Token Plan API Key：
 
 ```bash
 export MINIMAX_API_KEY="your-api-key-here"
 ```
 
-### 可选：自定义 API 域名
+### 可选：API Host
 
-如需使用 MiniMax 国际站或自定义域名：
+默认为 `https://api.minimaxi.com`。如需使用 MiniMax 国际站：
 
 ```bash
-export MINIMAX_API_HOST="https://api.minimaxi.com"  # 默认
-# 或
-export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
+export MINIMAX_API_HOST="https://api.minimax.chat"
 ```
 
 ## 使用示例

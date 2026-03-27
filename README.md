@@ -40,20 +40,20 @@ ln -s /Users/meng/workspace/minimax-token-plan-skills /path/to/your/project/.cla
 
 ## Configuration
 
-Set your MiniMax Token Plan API Key as an environment variable:
+### Required: API Key
+
+Set your MiniMax Token Plan API Key:
 
 ```bash
 export MINIMAX_API_KEY="your-api-key-here"
 ```
 
-### Optional: Custom API Host
+### Optional: API Host
 
-To use MiniMax's international endpoint or a custom domain:
+Default is `https://api.minimaxi.com`. To use MiniMax international endpoint:
 
 ```bash
-export MINIMAX_API_HOST="https://api.minimaxi.com"  # Default
-# or
-export MINIMAX_API_HOST="https://api.minimax.chat"  # Alternative
+export MINIMAX_API_HOST="https://api.minimax.chat"
 ```
 
 ## Usage Examples
