@@ -219,39 +219,8 @@ Monitor your MiniMax Token Plan quota and usage.
 ```
 
 **Sample output:**
-```
-================================
-    Minimax Account Usage
-================================
 
-Model: MiniMax-M*
---------------------------------
-  Period:         2026/03/27 15:00 to 2026/03/27 20:00
-  Quota:          1500 requests
-  Used:           55 requests (3.7%)
-  Remaining:      1445 requests
-  Resets In:      0d 1h 19m
-
-Model: speech-hd
---------------------------------
-  Period:         2026/03/27 00:00 to 2026/03/28 00:00
-  Quota:          9000 requests
-  Used:           761 requests (8.5%)
-  Remaining:      8239 requests
-  Resets In:      0d 5h 19m
-
-Model: image-01
---------------------------------
-  Period:         2026/03/27 00:00 to 2026/03/28 00:00
-  Quota:          100 requests
-  Used:           6 requests (6.0%)
-  Remaining:      94 requests
-  Resets In:      0d 5h 19m
-
-================================
-Query Time: 2026/03/27 18:40
-================================
-```
+![Usage Query Result](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/minimax-usage.png)
 
 ## Troubleshooting
 
