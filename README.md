@@ -1,44 +1,226 @@
-# MiniMax Skills
+# MiniMax Skills for Claude Code
 
-MiniMax AI 技能插件，为 Claude Code 提供 MiniMax 相关能力。
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai/code)
+[![MiniMax](https://img.shields.io/badge/MiniMax-API-green)](https://www.minimaxi.com)
 
-## Skills
+A collection of Claude Code skills that integrate MiniMax AI capabilities into your workflow. Generate images, synthesize speech, search the web, analyze images, and monitor your API usage — all through natural language commands.
 
-| Skill | 说明 | 触发词 |
-|-------|------|--------|
-| `minimax-speech` | 语音合成 TTS | "把这段文字转成语音"、"生成音频" |
-| `minimax-image` | 文生图/图生图 | "画一张图"、"生成图片" |
-| `minimax-search` | 联网搜索 | "搜索一下"、"联网搜索" |
-| `minimax-image-analysis` | 图片分析/OCR | "分析图像"、"提取图中文字" |
-| `minimax-usage` | 用量查询 | "查看用量"、"账户余额" |
+## Features
 
-## 安装方式
+| Skill | Description | Trigger Phrases |
+|-------|-------------|-----------------|
+| `minimax-image` | Text-to-Image & Image-to-Image | "generate an image", "create a picture", "draw" |
+| `minimax-speech` | Text-to-Speech (TTS) | "convert to speech", "generate audio", "read this text" |
+| `minimax-search` | Web Search | "search for", "look up", "find information" |
+| `minimax-image-analysis` | Image Analysis & OCR | "analyze image", "extract text from image", "describe this picture" |
+| `minimax-usage` | API Usage Query | "check usage", "account balance", "quota remaining" |
 
-### 全局安装（所有项目可用）
+## Prerequisites
+
+- Python 3.x
+- MiniMax API Key ([Get one here](https://www.minimaxi.com))
+
+## Installation
+
+### Global Installation (Available in all projects)
 
 ```bash
 ln -s /Users/meng/workspace/minimax-skills ~/.claude/skills/minimax-skills
 ```
 
-### 项目级安装（仅当前项目可用）
+### Project-level Installation (Current project only)
 
 ```bash
-ln -s /Users/meng/workspace/minimax-skills /your-project/.claude/skills/minimax-skills
+ln -s /Users/meng/workspace/minimax-skills /path/to/your/project/.claude/skills/minimax-skills
 ```
 
-## 前置要求
+## Configuration
 
-设置 MiniMax API Key：
+Set your MiniMax API Key as an environment variable:
 
 ```bash
 export MINIMAX_API_KEY="your-api-key-here"
 ```
 
-## 使用方法
+### Optional: Custom API Host
 
-安装后在 Claude Code 中直接说出触发词即可使用对应功能。
+To use MiniMax's international endpoint or a custom domain:
 
-例如：
-- "帮我画一张赛博朋克风格的城市图片"
-- "把这段文字转成语音"
-- "搜索一下最新的 AI 新闻"
+```bash
+export MINIMAX_API_HOST="https://api.minimaxi.com"  # Default
+# or
+export MINIMAX_API_HOST="https://api.minimax.chat"  # Alternative
+```
+
+## Usage
+
+Once installed, simply use natural language in Claude Code:
+
+### Image Generation
+```
+"Draw a cyberpunk city at night with neon lights"
+"Generate an image of a cat flying through space"
+```
+
+### Text-to-Speech
+```
+"Convert this paragraph to speech"
+"Read this text aloud"
+```
+
+### Web Search
+```
+"Search for the latest AI developments"
+"Look up information about quantum computing"
+```
+
+### Image Analysis
+```
+"Analyze this image and describe what's in it"
+"Extract the text from this screenshot"
+```
+
+### Usage Query
+```
+"Check my MiniMax API usage"
+"How much quota do I have left?"
+```
+
+## Project Structure
+
+```
+minimax-skills/
+├── skills/
+│   ├── minimax-image/           # Image generation skill
+│   │   ├── scripts/
+│   │   │   └── generate_image.py
+│   │   └── SKILL.md
+│   ├── minimax-speech/          # Text-to-speech skill
+│   │   ├── scripts/
+│   │   └── SKILL.md
+│   ├── minimax-search/          # Web search skill
+│   │   ├── scripts/
+│   │   │   └── standalone_search.py
+│   │   └── SKILL.md
+│   ├── minimax-image-analysis/  # Image analysis skill
+│   │   ├── scripts/
+│   │   │   └── image_analysis.py
+│   │   └── SKILL.md
+│   └── minimax-usage/           # Usage query skill
+│       ├── scripts/
+│       │   └── query.sh
+│       └── SKILL.md
+├── README.md
+└── README_CN.md                 # 中文文档
+```
+
+## Skill Details
+
+### minimax-image
+
+Generate high-quality images from text descriptions.
+
+**Features:**
+- Text-to-Image with multiple aspect ratios (1:1, 16:9, 9:16, etc.)
+- Image-to-Image for maintaining character/object consistency
+- Batch generation (up to 9 images per request)
+- Custom filename prefixes to avoid overwriting
+
+**Example:**
+```bash
+python skills/minimax-image/scripts/generate_image.py \
+  "a serene mountain landscape at sunrise" \
+  --aspect-ratio 16:9 \
+  --prefix "mountain_sunrise_landscape"
+```
+
+### minimax-speech
+
+Convert text to natural-sounding speech using MiniMax's async TTS API.
+
+**Features:**
+- Multiple voice options
+- HD quality audio output
+- Supports long text (batch processing)
+
+### minimax-search
+
+Search the web for real-time information.
+
+**Features:**
+- Natural language queries
+- Structured search results
+- Integration with MiniMax's search API
+
+### minimax-image-analysis
+
+Analyze images and extract information.
+
+**Features:**
+- Image description and understanding
+- OCR text extraction
+- Visual content analysis
+
+### minimax-usage
+
+Monitor your MiniMax API quota and usage.
+
+**Features:**
+- Check remaining quota for each model
+- View usage statistics
+- Track billing cycle
+
+## Development
+
+### Code Formatting
+
+This project uses `ruff` for Python code formatting:
+
+```bash
+ruff format skills/
+```
+
+### Adding a New Skill
+
+1. Create a new directory under `skills/`
+2. Add a `SKILL.md` with skill metadata and documentation
+3. Add executable scripts under `scripts/`
+4. Update this README
+
+## Troubleshooting
+
+### MINIMAX_API_KEY not set
+
+Make sure you've exported your API key:
+```bash
+export MINIMAX_API_KEY="your-api-key-here"
+```
+
+### Real-name authentication required (Error 2038)
+
+MiniMax API requires real-name authentication. Please complete the verification in your MiniMax account dashboard.
+
+### Permission denied when running scripts
+
+Make scripts executable:
+```bash
+chmod +x skills/*/scripts/*.py skills/*/scripts/*.sh
+```
+
+## Documentation
+
+- [English Documentation](README.md) (This file)
+- [中文文档](README_CN.md)
+
+## License
+
+MIT License - See [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues or pull requests.
+
+## Acknowledgments
+
+- Powered by [MiniMax](https://www.minimaxi.com) AI API
+- Built for [Claude Code](https://claude.ai/code)
