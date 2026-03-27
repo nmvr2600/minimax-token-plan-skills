@@ -135,10 +135,7 @@ export MINIMAX_API_HOST="https://api.minimax.chat"
 
 **示例输出：**
 
-<audio controls>
-  <source src="https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/tts_output.mp3" type="audio/mpeg">
-  您的浏览器不支持音频元素。
-</audio>
+🔊 [播放 TTS 示例](https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/tts_output.mp3)
 
 **特性：**
 - 327 种音色可选
