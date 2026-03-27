@@ -134,7 +134,11 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
 - `Chinese (Mandarin)_Gentleman` - 绅士风格
 
 **示例输出：**
-- [TTS 示例音频](samples/tts_output.mp3)
+
+<audio controls>
+  <source src="https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/tts_output.mp3" type="audio/mpeg">
+  您的浏览器不支持音频元素。
+</audio>
 
 **特性：**
 - 327 种音色可选

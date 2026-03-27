@@ -134,7 +134,11 @@ Convert text to natural-sounding speech using MiniMax's async TTS API.
 - `Chinese (Mandarin)_Gentleman` - Gentleman style
 
 **Example output:**
-- [Sample TTS Output](samples/tts_output.mp3)
+
+<audio controls>
+  <source src="https://raw.githubusercontent.com/nmvr2600/minimax-token-plan-skills/main/samples/tts_output.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Features:**
 - Multiple voice options (327 voices available)
