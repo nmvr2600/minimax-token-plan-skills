@@ -7,9 +7,9 @@
                     {
                         "type": "command",
                         "command": "jq -r '.tool_input.file_path' | xargs ruff format",
-                        "timeout": 30,
+                        "timeout": 30
                     }
-                ],
+                ]
             }
         ]
     }

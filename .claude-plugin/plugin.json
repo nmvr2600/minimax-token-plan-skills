@@ -2,7 +2,7 @@
   "name": "minimax-skills",
   "version": "1.0.0",
   "description": "MiniMax AI 技能插件集合 - 包含语音合成、文生图、联网搜索、图片分析、用量查询等功能",
-  "author": "meng",
+  "author": "nmvr2600",
   "license": "MIT",
   "minClaudeVersion": "0.1.0",
   "skills": {

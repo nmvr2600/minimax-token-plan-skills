@@ -6,9 +6,6 @@ description: |
   当用户询问"还剩多少额度"、"查看用量"、"检查配额"、"账户余额"时触发。
 allowed-tools: Bash(curl:*) Bash(jq:*)
 model: haiku
-metadata:
-  author: Macyou
-  version: 1.0.0
 ---
 
 # MiniMax Usage Query
