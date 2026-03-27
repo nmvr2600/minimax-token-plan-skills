@@ -104,13 +104,32 @@ async function webSearch(apiKey: string, apiHost: string, query: string): Promis
   return makeRequest(apiKey, apiHost, "/v1/coding_plan/search", payload);
 }
 
+// 显示帮助信息
+function showHelp(): void {
+  console.log("MiniMax Web Search Script");
+  console.log("");
+  console.log("用法: search.ts <搜索关键词>");
+  console.log("");
+  console.log("选项:");
+  console.log("  -h, --help      显示此帮助信息");
+  console.log("");
+  console.log("环境变量:");
+  console.log("  MINIMAX_API_KEY     必需，MiniMax API 密钥");
+  console.log("  MINIMAX_API_HOST    可选，API 主机地址（默认: https://api.minimaxi.com）");
+  console.log("");
+  console.log("示例:");
+  console.log('  bun run search.ts "Python 教程"');
+  console.log('  bun run search.ts "2024年 AI 发展趋势"');
+}
+
 // 主函数
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
-  if (args.length < 1) {
-    console.error(`用法: ${process.argv[1]} <搜索关键词>`);
-    process.exit(1);
+  // 检查帮助标志
+  if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+    showHelp();
+    process.exit(args.length === 0 ? 1 : 0);
   }
 
   const query = args[0];

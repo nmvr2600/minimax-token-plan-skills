@@ -35,19 +35,22 @@ export MINIMAX_API_HOST="https://api.minimax.chat"  # 默认
 
 ```bash
 # 不传提示词时自动使用全面默认分析
-bun run scripts/analyze.ts "photo.jpg"
+bun run skills/minimax-image-analysis/scripts/analyze.ts "photo.jpg"
+
+# 或使用快捷命令
+bun run analyze "photo.jpg"
 
 # 指定自定义提示词
-bun run scripts/analyze.ts "screenshot.png" "描述这张截图的界面内容"
+bun run skills/minimax-image-analysis/scripts/analyze.ts "screenshot.png" "描述这张截图的界面内容"
 
 # 提取图中所有文字（OCR）
-bun run scripts/analyze.ts "document.jpg" "提取图中所有文字，保留格式"
+bun run skills/minimax-image-analysis/scripts/analyze.ts "document.jpg" "提取图中所有文字，保留格式"
 
 # 分析图表
-bun run scripts/analyze.ts "chart.png" "分析这个图表的数据趋势"
+bun run skills/minimax-image-analysis/scripts/analyze.ts "chart.png" "分析这个图表的数据趋势"
 
 # 使用 URL 图片
-bun run scripts/analyze.ts "https://example.com/image.jpg"
+bun run skills/minimax-image-analysis/scripts/analyze.ts "https://example.com/image.jpg"
 ```
 
 ### 方式二：TypeScript 函数调用

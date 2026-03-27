@@ -117,8 +117,34 @@ async function queryUsage(apiKey: string, apiHost: string): Promise<void> {
   console.log("================================");
 }
 
+// 显示帮助信息
+function showHelp(): void {
+  console.log("MiniMax Usage Query Script");
+  console.log("");
+  console.log("用法: query.ts [选项]");
+  console.log("");
+  console.log("选项:");
+  console.log("  -h, --help      显示此帮助信息");
+  console.log("");
+  console.log("环境变量:");
+  console.log("  MINIMAX_API_KEY     必需，MiniMax API 密钥");
+  console.log("  MINIMAX_API_HOST    可选，API 主机地址（默认: https://www.minimaxi.com）");
+  console.log("");
+  console.log("示例:");
+  console.log("  bun run query.ts");
+  console.log("  MINIMAX_API_HOST=https://api.minimaxi.com bun run query.ts");
+}
+
 // 主函数
 async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+
+  // 检查帮助标志
+  if (args.includes("-h") || args.includes("--help")) {
+    showHelp();
+    process.exit(0);
+  }
+
   // 检查环境变量
   const apiKey = process.env.MINIMAX_API_KEY;
   if (!apiKey) {

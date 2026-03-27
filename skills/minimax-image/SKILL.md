@@ -37,19 +37,22 @@ bun install
 
 ```bash
 # 基本用法 - 生成 1:1 正方形图片
-bun run scripts/generate.ts "一个穿白色T恤的男人站在威尼斯海滩前"
+bun run skills/minimax-image/scripts/generate.ts "一个穿白色T恤的男人站在威尼斯海滩前"
+
+# 或使用快捷命令
+bun run image "一个穿白色T恤的男人站在威尼斯海滩前"
 
 # 指定宽高比（16:9 宽屏适合桌面壁纸）
-bun run scripts/generate.ts "女孩在图书馆窗前" --aspect-ratio 16:9
+bun run skills/minimax-image/scripts/generate.ts "女孩在图书馆窗前" --aspect-ratio 16:9
 
 # 竖屏比例（9:16 适合手机壁纸）
-bun run scripts/generate.ts "未来城市天际线" --aspect-ratio 9:16
+bun run skills/minimax-image/scripts/generate.ts "未来城市天际线" --aspect-ratio 9:16
 
 # 批量生成 4 张图片
-bun run scripts/generate.ts "梦幻森林" -n 4 --output-dir ./outputs
+bun run skills/minimax-image/scripts/generate.ts "梦幻森林" -n 4 --output-dir ./outputs
 
 # 使用 URL 格式返回（适合快速预览）
-bun run scripts/generate.ts "抽象艺术" --format url
+bun run skills/minimax-image/scripts/generate.ts "抽象艺术" --format url
 ```
 
 ### 方式二：Python 函数调用

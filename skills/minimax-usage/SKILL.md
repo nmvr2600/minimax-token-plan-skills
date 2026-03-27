@@ -31,8 +31,11 @@ export MINIMAX_API_KEY="your-api-key-here"
 ### 进入 skill 目录执行
 
 ```bash
-cd /path/to/minimax-usage
-bun run scripts/query.ts
+# 在项目根目录运行
+bun run skills/minimax-usage/scripts/query.ts
+
+# 或使用快捷命令
+bun run usage
 ```
 
 ### 输出示例

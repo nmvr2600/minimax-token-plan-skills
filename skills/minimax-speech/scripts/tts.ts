@@ -61,7 +61,6 @@ interface FileRetrieveResponse {
  */
 function extractMp3FromTar(tarData: ArrayBuffer): Uint8Array | null {
   const data = new Uint8Array(tarData);
-  const view = new DataView(tarData);
   let offset = 0;
 
   while (offset < data.length) {
@@ -298,6 +297,27 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
   throw new MinimaxError("等待任务超时");
 }
 
+// 显示帮助信息
+function showHelp(): void {
+  console.log("MiniMax 语音合成脚本");
+  console.log("");
+  console.log("用法: tts.ts <文本> [选项]");
+  console.log("");
+  console.log("选项:");
+  console.log("  -h, --help      显示此帮助信息");
+  console.log("  -o, --output    输出文件路径 (默认: output.mp3)");
+  console.log("  -v, --voice     音色ID (默认: female-tianmei)");
+  console.log("  -m, --model     语音模型 (默认: speech-2.8-hd)");
+  console.log("  -s, --speed     语速 0.5-2.0 (默认: 1.0)");
+  console.log("      --vol       音量 0-10 (默认: 10)");
+  console.log("  -p, --pitch     音调 0.5-2.0 (默认: 1.0)");
+  console.log("");
+  console.log("示例:");
+  console.log('  bun run tts.ts "你好世界"');
+  console.log('  bun run tts.ts "你好世界" -o hello.mp3 -v male-qn-qingse');
+  console.log('  bun run tts.ts "你好世界" --speed 1.2 --vol 8');
+}
+
 // 解析命令行参数
 function parseArgs(): {
   text: string;
@@ -310,16 +330,10 @@ function parseArgs(): {
 } {
   const args = process.argv.slice(2);
 
-  if (args.length < 1) {
-    console.error("用法: tts.ts <文本> [选项]");
-    console.error("选项:");
-    console.error("  -o, --output    输出文件路径 (默认: output.mp3)");
-    console.error("  -v, --voice     音色ID (默认: female-tianmei)");
-    console.error("  -m, --model     语音模型 (默认: speech-2.8-hd)");
-    console.error("  -s, --speed     语速 0.5-2.0 (默认: 1.0)");
-    console.error("      --vol       音量 0-10 (默认: 10)");
-    console.error("  -p, --pitch     音调 0.5-2.0 (默认: 1.0)");
-    process.exit(1);
+  // 检查帮助标志
+  if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+    showHelp();
+    process.exit(args.length === 0 ? 1 : 0);
   }
 
   const text = args[0];
@@ -353,15 +367,24 @@ function parseArgs(): {
       case "-s":
       case "--speed":
         speed = parseFloat(nextArg) || 1.0;
+        if (speed < 0.5 || speed > 2.0) {
+          throw new MinimaxError("语速必须在 0.5-2.0 之间");
+        }
         i++;
         break;
       case "--vol":
         vol = parseInt(nextArg, 10) || 10;
+        if (vol < 0 || vol > 10) {
+          throw new MinimaxError("音量必须在 0-10 之间");
+        }
         i++;
         break;
       case "-p":
       case "--pitch":
         pitch = parseFloat(nextArg) || 1.0;
+        if (pitch < 0.5 || pitch > 2.0) {
+          throw new MinimaxError("音调必须在 0.5-2.0 之间");
+        }
         i++;
         break;
     }

@@ -239,17 +239,33 @@ async function analyzeImage(
   return content;
 }
 
+// 显示帮助信息
+function showHelp(): void {
+  console.log("MiniMax Image Analysis Script");
+  console.log("");
+  console.log("用法: analyze.ts <图像路径或URL> [提示词]");
+  console.log("");
+  console.log("选项:");
+  console.log("  -h, --help      显示此帮助信息");
+  console.log("");
+  console.log("环境变量:");
+  console.log("  MINIMAX_API_KEY     必需，MiniMax API 密钥");
+  console.log("  MINIMAX_API_HOST    可选，API 主机地址（默认: https://api.minimax.chat）");
+  console.log("");
+  console.log("示例:");
+  console.log('  bun run analyze.ts "photo.jpg"');
+  console.log('  bun run analyze.ts "photo.jpg" "描述这张图片"');
+  console.log('  bun run analyze.ts "https://example.com/image.jpg"');
+}
+
 // 主函数
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
-  // 检查命令行参数
-  if (args.length < 1) {
-    console.error(`用法: ${process.argv[1]} <图像路径或URL> [提示词]`);
-    console.error(`示例: ${process.argv[1]} "photo.jpg"`);
-    console.error(`示例: ${process.argv[1]} "photo.jpg" "描述这张图片"`);
-    console.error("（不传提示词时使用默认全面分析提示词）");
-    process.exit(1);
+  // 检查帮助标志
+  if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+    showHelp();
+    process.exit(args.length === 0 ? 1 : 0);
   }
 
   const imageSource = args[0];

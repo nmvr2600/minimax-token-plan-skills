@@ -135,6 +135,26 @@ async function generateImage(options: GenerateImageOptions): Promise<string[]> {
   return outputPaths;
 }
 
+// 显示帮助信息
+function showHelp(): void {
+  console.log("Minimax Image01 文生图脚本");
+  console.log("");
+  console.log("用法: generate.ts <prompt> [选项]");
+  console.log("");
+  console.log("选项:");
+  console.log("  -h, --help          显示此帮助信息");
+  console.log("  -r, --aspect-ratio  宽高比 (默认: 1:1)");
+  console.log("  -o, --output-dir    输出目录 (默认: .)");
+  console.log("  -f, --format        返回格式: base64 或 url (默认: base64)");
+  console.log("  -n, --n             生成数量 1-9 (默认: 1)");
+  console.log("  -p, --prefix        文件名前缀");
+  console.log("");
+  console.log("示例:");
+  console.log('  bun run generate.ts "a cute cat"');
+  console.log('  bun run generate.ts "a cute cat" -n 4 -r 16:9');
+  console.log('  bun run generate.ts "a cute cat" -o ./images -p cat');
+}
+
 // 解析命令行参数
 function parseArgs(): {
   prompt: string;
@@ -146,15 +166,10 @@ function parseArgs(): {
 } {
   const args = process.argv.slice(2);
 
-  if (args.length < 1) {
-    console.error("用法: generate.ts <prompt> [选项]");
-    console.error("选项:");
-    console.error("  --aspect-ratio, -r  宽高比 (默认: 1:1)");
-    console.error("  --output-dir, -o    输出目录 (默认: .)");
-    console.error("  --format, -f        返回格式: base64 或 url (默认: base64)");
-    console.error("  --n, -n             生成数量 1-9 (默认: 1)");
-    console.error("  --prefix, -p        文件名前缀");
-    process.exit(1);
+  // 检查帮助标志
+  if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+    showHelp();
+    process.exit(args.length === 0 ? 1 : 0);
   }
 
   const prompt = args[0];
@@ -189,6 +204,9 @@ function parseArgs(): {
       case "-n":
       case "--n":
         n = parseInt(nextArg, 10) || 1;
+        if (n < 1 || n > 9) {
+          throw new MinimaxError("生成数量必须在 1-9 之间");
+        }
         i++;
         break;
       case "-p":

@@ -35,13 +35,16 @@ export MINIMAX_API_HOST="https://api.minimaxi.com"  # 默认，可不设置
 
 ```bash
 # 基础搜索
-bun run scripts/search.ts "Python 教程"
+bun run skills/minimax-search/scripts/search.ts "Python 教程"
+
+# 或使用快捷命令
+bun run search "Python 教程"
 
 # 搜索最新新闻
-bun run scripts/search.ts "2024年 AI 发展趋势"
+bun run skills/minimax-search/scripts/search.ts "2024年 AI 发展趋势"
 
 # 搜索技术文档
-bun run scripts/search.ts "Docker 安装指南"
+bun run skills/minimax-search/scripts/search.ts "Docker 安装指南"
 ```
 
 ### 方式二：TypeScript 函数调用
