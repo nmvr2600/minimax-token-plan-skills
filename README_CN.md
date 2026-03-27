@@ -54,148 +54,204 @@ export MINIMAX_API_HOST="https://api.minimaxi.com"  # 默认
 export MINIMAX_API_HOST="https://api.minimax.chat"  # 备用
 ```
 
-## 使用方法
+## 使用示例
 
-安装完成后，在 Claude Code 中直接使用自然语言：
+安装完成后，在 Claude Code 中使用自然语言，或直接运行脚本：
 
-### 图片生成
-```
-"画一张赛博朋克风格的夜景城市图"
-"Generate an image of a cat flying through space"
-```
-
-### 语音合成
-```
-"把这段文字转成语音"
-"Convert this paragraph to speech"
-```
-
-### 联网搜索
-```
-"搜索一下最新的 AI 发展"
-"Look up information about quantum computing"
-```
-
-### 图片分析
-```
-"分析这张图片里有什么"
-"Extract the text from this screenshot"
-```
-
-### 用量查询
-```
-"查看我的 MiniMax Token Plan 用量"
-"How much quota do I have left?"
-```
-
-## 项目结构
-
-```
-minimax-token-plan-skills/
-├── skills/
-│   ├── minimax-image/           # 图片生成技能
-│   │   ├── scripts/
-│   │   │   └── generate.ts
-│   │   └── SKILL.md
-│   ├── minimax-speech/          # 语音合成技能
-│   │   ├── scripts/
-│   │   │   └── tts.ts
-│   │   └── SKILL.md
-│   ├── minimax-search/          # 联网搜索技能
-│   │   ├── scripts/
-│   │   │   └── search.ts
-│   │   └── SKILL.md
-│   ├── minimax-image-analysis/  # 图片分析技能
-│   │   ├── scripts/
-│   │   │   └── analyze.ts
-│   │   └── SKILL.md
-│   └── minimax-usage/           # 用量查询技能
-│       ├── scripts/
-│       │   └── query.ts
-│       └── SKILL.md
-├── package.json
-├── tsconfig.json
-├── README.md                    # English Documentation
-└── README_CN.md                 # 中文文档（本文档）
-```
-
-## 技能详情
-
-### minimax-image（图片生成）
+### 图片生成（minimax-image）
 
 根据文字描述生成高质量图片。
 
-**特性：**
-- 文生图，支持多种宽高比（1:1、16:9、9:16 等）
-- 图生图，保持人物/物体一致性
-- 批量生成（每次最多 9 张）
-- 自定义文件名前缀，避免覆盖
-
-**示例：**
-```bash
-bun run skills/minimax-image/scripts/generate.ts \
-  "日出时的山景" \
-  --aspect-ratio 16:9 \
-  --prefix "mountain_sunrise_landscape"
+**自然语言：**
+```
+"画一张赛博朋克风格的夜景城市图"
+"生成一张太空飞猫的图片"
 ```
 
-**文件名规则：**
-- 单张生成：`{prefix}.jpeg`
-- 批量生成：`{prefix}_0.jpeg`, `{prefix}_1.jpeg`...
+**直接运行脚本：**
+```bash
+# 基本用法 - 生成 1:1 正方形图片
+bun run skills/minimax-image/scripts/generate.ts "窗台上坐着一只可爱的猫咪"
 
-### minimax-speech（语音合成）
+# 指定宽高比（16:9 适合桌面壁纸）
+bun run skills/minimax-image/scripts/generate.ts "未来城市天际线" --aspect-ratio 16:9
+
+# 批量生成 4 张图片
+bun run skills/minimax-image/scripts/generate.ts "梦幻森林" -n 4 --output-dir ./outputs
+
+# 自定义文件名前缀
+bun run skills/minimax-image/scripts/generate.ts "日落山景" --prefix "mountain_sunset"
+```
+
+**支持的宽高比：** `1:1`、`16:9`、`9:16`、`4:3`、`3:4`、`3:2`、`2:3`、`21:9`
+
+**示例输出：**
+
+| 提示词 | 输出 |
+|--------|------|
+| "a cat flying through space, comic style" | ![太空飞猫](samples/cat_flying_space_comic.jpeg) |
+| "cute cat poses, multiple angles" | ![可爱猫咪](samples/cute_cat_poses_0.jpeg) |
+| "牧童遥指杏花村，中国传统水墨画风格" | ![水墨画](samples/herdsman_pointing_xinghua_village_ink_wash.jpeg) |
+
+### 语音合成（minimax-speech）
 
 使用 MiniMax 异步 TTS API 将文字转为自然语音。
 
-**特性：**
-- 多种音色可选
-- 高清音质输出
-- 支持长文本（自动分批处理）
+**自然语言：**
+```
+"把这段文字转成语音"
+"用温柔的女声读这段文字"
+```
 
-### minimax-search（联网搜索）
+**直接运行脚本：**
+```bash
+# 默认音色（female-tianmei 甜美女声）
+bun run skills/minimax-speech/scripts/tts.ts "欢迎使用我们的服务！"
+
+# 指定音色和输出文件
+bun run skills/minimax-speech/scripts/tts.ts "第一章：故事的开始" \
+  --voice female-yujie \
+  --output story_chapter_1.mp3
+
+# 调整语速和音量
+bun run skills/minimax-speech/scripts/tts.ts "紧急通知" \
+  --voice male-qn-qingse \
+  --speed 1.2 \
+  --vol 8 \
+  --output announcement.mp3
+```
+
+**可用音色：**
+- `female-tianmei` - 甜美女声（默认）
+- `female-yujie` - 御姐音，适合讲故事
+- `female-shaonv` - 少女音
+- `male-qn-qingse` - 青年男声
+- `male-jieshuo` - 解说男声
+- `Chinese (Mandarin)_News_Anchor` - 新闻主播风格
+- `Chinese (Mandarin)_Gentleman` - 绅士风格
+
+**示例输出：**
+- [TTS 示例音频](samples/tts_output.mp3)
+
+**特性：**
+- 327 种音色可选
+- 可调节语速（0.5-2.0）、音量（0-10）、音调（0.5-2.0）
+- 支持长文本（最多 10 万字符）
+- 高清音质输出
+
+### 联网搜索（minimax-search）
 
 搜索网络获取实时信息。
 
-**特性：**
-- 自然语言查询
-- 结构化搜索结果
-- 集成 MiniMax 搜索 API
-
-### minimax-image-analysis（图片分析）
-
-分析图片并提取信息。
-
-**特性：**
-- 图片描述与理解
-- OCR 文字提取
-- 视觉内容分析
-
-### minimax-usage（Token 用量查询）
-
-监控 MiniMax Token Plan 的 Token 用量和配额。
-
-**特性：**
-- 查看各模型剩余 Token 配额
-- Token 消耗统计
-- 追踪计费周期
-
-## 开发指南
-
-### 代码格式化
-
-本项目使用 TypeScript，启用严格类型检查。无需额外格式化工具。
-
-```bash
-# 类型检查
-bun run tsc --noEmit
+**自然语言：**
+```
+"搜索一下最新的 AI 发展"
+"查找量子计算相关资料"
 ```
 
-### 添加新技能
+**直接运行脚本：**
+```bash
+# 基础搜索
+bun run skills/minimax-search/scripts/search.ts "Python 最佳实践"
 
-1. 在 `skills/` 目录下创建新文件夹
-2. 添加 `SKILL.md` 文件，包含技能元数据和文档
-3. 在 `scripts/` 目录下添加可执行脚本
-4. 更新本 README 文档
+# 返回 JSON 格式的搜索结果和相关搜索推荐
+bun run skills/minimax-search/scripts/search.ts "2024 AI 趋势"
+```
+
+**输出格式：**
+```json
+{
+  "organic": [
+    {
+      "title": "搜索结果标题",
+      "link": "https://example.com",
+      "snippet": "结果摘要...",
+      "date": "2024-03-15"
+    }
+  ],
+  "related_searches": [
+    {"query": "相关搜索词"}
+  ]
+}
+```
+
+### 图片分析（minimax-image-analysis）
+
+分析图片并提取信息，包括 OCR 文字识别。
+
+**自然语言：**
+```
+"分析这张图片里有什么"
+"提取这张截图中的文字"
+"这个图表展示了什么数据？"
+```
+
+**直接运行脚本：**
+```bash
+# 使用默认提示词（全面分析 + OCR）
+bun run skills/minimax-image-analysis/scripts/analyze.ts "照片.jpg"
+
+# 只提取文字
+bun run skills/minimax-image-analysis/scripts/analyze.ts "文档.jpg" "提取图中所有文字"
+
+# 分析 UI 截图
+bun run skills/minimax-image-analysis/scripts/analyze.ts "截图.png" "描述这个界面的功能"
+
+# 分析图表
+bun run skills/minimax-image-analysis/scripts/analyze.ts "图表.png" "分析这个图表的数据趋势"
+
+# 使用网络图片 URL
+bun run skills/minimax-image-analysis/scripts/analyze.ts "https://example.com/image.jpg"
+```
+
+**支持的格式：** JPEG、PNG、WebP（最大 10MB）
+
+### 用量查询（minimax-usage）
+
+监控 MiniMax Token Plan 的用量和配额。
+
+**自然语言：**
+```
+"查看我的 MiniMax Token Plan 用量"
+"还剩多少额度？"
+```
+
+**直接运行脚本：**
+```bash
+# 查询所有模型的用量
+bun run skills/minimax-usage/scripts/query.ts
+```
+
+**示例输出：**
+```
+================================
+    Minimax Account Usage
+================================
+
+Model: abab6.5s-chat
+--------------------------------
+  Period:         2024-03-01 00:00 to 2024-03-31 23:59
+  Quota:          10000 requests
+  Used:           2345 requests (23.5%)
+  Remaining:      7655 requests
+  Resets In:      5d 12h 30m
+
+================================
+Query Time: 2024-03-25 14:30:00
+================================
+```
+
+## 快捷命令
+
+也可以使用 package.json 中定义的快捷命令：
+
+```bash
+bun run image "可爱的猫咪"              # 图片生成
+bun run tts "你好世界"                  # 语音合成
+bun run search "AI 新闻"                # 联网搜索
+bun run analyze "照片.jpg"              # 图片分析
+bun run usage                           # 用量查询
+```
 
 ## 常见问题
 
@@ -210,11 +266,11 @@ export MINIMAX_API_KEY="your-api-key-here"
 
 MiniMax Token Plan 需要实名认证。请在 MiniMax 账户后台完成实名认证。
 
-### 运行脚本时权限不足
+### 未找到 Bun
 
-Bun 脚本不需要执行权限，但如需设置：
+请先安装 Bun：
 ```bash
-chmod +x skills/*/scripts/*.ts
+curl -fsSL https://bun.sh/install | bash
 ```
 
 ## 文档
