@@ -13,7 +13,7 @@ model: haiku
 
 | 任务 | 命令 |
 |------|------|
-| 查询账户余额/用量 | `bash scripts/query.sh` |
+| 查询账户余额/用量 | `bun run scripts/query.ts` |
 | 检查环境变量 | `echo $MINIMAX_API_KEY` |
 
 ## 前置要求
@@ -32,7 +32,7 @@ export MINIMAX_API_KEY="your-api-key-here"
 
 ```bash
 cd /path/to/minimax-usage
-bash scripts/query.sh
+bun run scripts/query.ts
 ```
 
 ### 输出示例
@@ -61,7 +61,7 @@ Query Time: 2024-03-25 14:30:00
 
 ```bash
 # 在批量生成图片/语音前，先检查额度
-bash scripts/query.sh
+bun run scripts/query.ts
 ```
 
 ### 定期监控配额使用
@@ -92,7 +92,7 @@ curl -H "Authorization: Bearer $MINIMAX_API_KEY" \
 
 ```bash
 # 脚本会自动检查环境变量并提供友好的错误提示
-bash scripts/query.sh
+bun run scripts/query.ts
 ```
 
 ### ❌ WRONG - 不使用环境变量

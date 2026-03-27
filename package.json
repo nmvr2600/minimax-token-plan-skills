@@ -1,0 +1,20 @@
+{
+  "name": "minimax-skills",
+  "version": "1.0.0",
+  "description": "MiniMax AI 技能插件 - 语音合成、文生图、联网搜索、图片分析、用量查询",
+  "type": "module",
+  "scripts": {
+    "search": "bun run skills/minimax-search/scripts/search.ts",
+    "image": "bun run skills/minimax-image/scripts/generate.ts",
+    "analyze": "bun run skills/minimax-image-analysis/scripts/analyze.ts",
+    "tts": "bun run skills/minimax-speech/scripts/tts.ts",
+    "usage": "bun run skills/minimax-usage/scripts/query.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

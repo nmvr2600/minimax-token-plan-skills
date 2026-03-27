@@ -11,10 +11,10 @@ description: 当用户需要 AI 生成图片时说"画一张图"、"生成图片
 
 | 任务 | 命令 |
 |------|------|
-| 生成单张图片 | `python scripts/generate_image.py "prompt描述"` |
-| 指定宽高比 | `python scripts/generate_image.py "prompt" --aspect-ratio 16:9` |
-| 批量生成 | `python scripts/generate_image.py "prompt" -n 4` |
-| 指定输出目录 | `python scripts/generate_image.py "prompt" --output-dir ./images` |
+| 生成单张图片 | `bun run scripts/generate.ts "prompt描述"` |
+| 指定宽高比 | `bun run scripts/generate.ts "prompt" --aspect-ratio 16:9` |
+| 批量生成 | `bun run scripts/generate.ts "prompt" -n 4` |
+| 指定输出目录 | `bun run scripts/generate.ts "prompt" --output-dir ./images` |
 | 图生图（一致性） | 使用 `subject_reference` 参数（见下方示例） |
 
 ## 前置要求
@@ -28,7 +28,7 @@ export MINIMAX_API_KEY="your_api_key_here"
 **依赖安装：**
 
 ```bash
-pip install requests
+bun install
 ```
 
 ## 使用方式
@@ -37,19 +37,19 @@ pip install requests
 
 ```bash
 # 基本用法 - 生成 1:1 正方形图片
-python scripts/generate_image.py "一个穿白色T恤的男人站在威尼斯海滩前"
+bun run scripts/generate.ts "一个穿白色T恤的男人站在威尼斯海滩前"
 
 # 指定宽高比（16:9 宽屏适合桌面壁纸）
-python scripts/generate_image.py "女孩在图书馆窗前" --aspect-ratio 16:9
+bun run scripts/generate.ts "女孩在图书馆窗前" --aspect-ratio 16:9
 
 # 竖屏比例（9:16 适合手机壁纸）
-python scripts/generate_image.py "未来城市天际线" --aspect-ratio 9:16
+bun run scripts/generate.ts "未来城市天际线" --aspect-ratio 9:16
 
 # 批量生成 4 张图片
-python scripts/generate_image.py "梦幻森林" -n 4 --output-dir ./outputs
+bun run scripts/generate.ts "梦幻森林" -n 4 --output-dir ./outputs
 
 # 使用 URL 格式返回（适合快速预览）
-python scripts/generate_image.py "抽象艺术" --format url
+bun run scripts/generate.ts "抽象艺术" --format url
 ```
 
 ### 方式二：Python 函数调用
@@ -180,14 +180,14 @@ for path in paths:
 
 ```bash
 # 中文描述效果可能不如英文
-python scripts/generate_image.py "一个可爱的猫咪"
+bun run scripts/generate.ts "一个可爱的猫咪"
 ```
 
 ### ✅ CORRECT - 使用英文提示词
 
 ```bash
 # 英文描述通常效果更好
-python scripts/generate_image.py "a cute fluffy cat sitting on a windowsill, sunlight, warm colors"
+bun run scripts/generate.ts "a cute fluffy cat sitting on a windowsill, sunlight, warm colors"
 ```
 
 ## 错误处理
@@ -227,7 +227,7 @@ except Exception as e:
 ## 脚本帮助
 
 ```bash
-python scripts/generate_image.py --help
+bun run scripts/generate.ts -- --help
 ```
 
 输出示例：
