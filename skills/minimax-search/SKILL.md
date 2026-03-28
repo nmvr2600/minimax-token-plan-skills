@@ -11,7 +11,7 @@ MiniMax 联网搜索 API，基于 MiniMax 联网搜索能力获取网络信息�
 
 | 任务 | 命令 | 输出格式 |
 |------|------|----------|
-| 基础搜索 | `bun run scripts/search.ts "关键词"` | JSON |
+| 基础搜索 | `bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "关键词"` | JSON |
 | 在代码中使用 | `web_search(api_key, api_host, "关键词")` | Object |
 | 格式化展示 | `search_and_display("关键词")` | 人类可读文本 |
 
@@ -35,16 +35,16 @@ export MINIMAX_API_HOST="https://api.minimaxi.com"  # 默认，可不设置
 
 ```bash
 # 基础搜索
-bun run skills/minimax-search/scripts/search.ts "Python 教程"
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "Python 教程"
 
 # 或使用快捷命令
-bun run search "Python 教程"
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "Python 教程"
 
 # 搜索最新新闻
-bun run skills/minimax-search/scripts/search.ts "2024年 AI 发展趋势"
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "2024年 AI 发展趋势"
 
 # 搜索技术文档
-bun run skills/minimax-search/scripts/search.ts "Docker 安装指南"
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "Docker 安装指南"
 ```
 
 ### 方式二：TypeScript 函数调用
@@ -127,13 +127,13 @@ POST https://api.minimaxi.com/v1/coding_plan/search
 ### 搜索技术文档
 
 ```bash
-bun run scripts/search.ts "FastAPI 教程"
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "FastAPI 教程"
 ```
 
 ### 查询最新信息
 
 ```bash
-bun run scripts/search.ts "2024年最新 AI 模型"
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "2024年最新 AI 模型"
 ```
 
 ### 在代码中集成搜索
@@ -219,7 +219,7 @@ try {
 
 ```bash
 # 需要先安装依赖
-bun run scripts/search.ts "搜索词"  # 会报错
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "搜索词"  # 会报错
 ```
 
 ### ✅ CORRECT - 先安装依赖
@@ -227,7 +227,7 @@ bun run scripts/search.ts "搜索词"  # 会报错
 ```bash
 # 首次使用前安装依赖
 bun install
-bun run scripts/search.ts "搜索词"
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "搜索词"
 ```
 
 ## 错误处理
@@ -283,7 +283,7 @@ try {
 ## 脚本使用帮助
 
 ```bash
-bun run scripts/search.ts -- --help
+bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts -- --help
 ```
 
 输出：
@@ -296,7 +296,7 @@ bun run scripts/search.ts -- --help
 
 示例:
     export MINIMAX_API_KEY="your-key"
-    bun run scripts/search.ts "Python 教程"
+    bun run ${CLAUDE_SKILL_DIR}/scripts/search.ts "Python 教程"
 ```
 
 ## 最佳实践

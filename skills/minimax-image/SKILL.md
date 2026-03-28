@@ -1,21 +1,24 @@
 ---
 name: minimax-image
-description: 当用户需要 AI 生成图片时说"画一张图"、"生成图片"、"文生图"、"用 AI 画图"、"create an image"、"generate a picture"或提到"Minimax 图片生成"时触发。
+description: 使用Minimax image-01 生图，当用户说"使用 Minimax 生图"时触发。
 ---
 
 # MiniMax Image 文生图技能
 
 使用 MiniMax Image01 API 进行高质量的文生图和图生图创作，支持多种宽高比和批量生成。
 
+**CRITICAL**: 所有脚本路径使用 `${CLAUDE_SKILL_DIR}` 变量引用，确保插件安装后无论用户工作目录在哪都能正确找到脚本。
+
 ## Quick Reference
 
 | 任务 | 命令 |
 |------|------|
-| 生成单张图片 | `bun run scripts/generate.ts "prompt描述"` |
-| 指定宽高比 | `bun run scripts/generate.ts "prompt" --aspect-ratio 16:9` |
-| 批量生成 | `bun run scripts/generate.ts "prompt" -n 4` |
-| 指定输出目录 | `bun run scripts/generate.ts "prompt" --output-dir ./images` |
-| 图生图（一致性） | 使用 `subject_reference` 参数（见下方示例） |
+| 生成单张图片 | `bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "prompt"` |
+| 指定宽高比 | `bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "prompt" --aspect-ratio 16:9` |
+| 批量生成 | `bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "prompt" -n 4` |
+| 指定输出目录 | `bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "prompt" --output-dir ./images` |
+| 自定义文件名前缀 | `bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "prompt" --prefix my_photo` |
+| 图生图（主体一致性） | `bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "prompt" --reference-image <URL>` |
 
 ## 前置要求
 
@@ -25,237 +28,153 @@ description: 当用户需要 AI 生成图片时说"画一张图"、"生成图片
 export MINIMAX_API_KEY="your_api_key_here"
 ```
 
-**依赖安装：**
+**可选环境变量：**
 
 ```bash
-bun install
+# API 主机地址（国内站默认 https://api.minimaxi.com）
+export MINIMAX_API_HOST="https://api.minimaxi.com"
 ```
 
 ## 使用方式
 
-### 方式一：命令行调用（推荐）
+### 文生图
 
 ```bash
 # 基本用法 - 生成 1:1 正方形图片
-bun run skills/minimax-image/scripts/generate.ts "一个穿白色T恤的男人站在威尼斯海滩前"
-
-# 或使用快捷命令
-bun run image "一个穿白色T恤的男人站在威尼斯海滩前"
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "a cute fluffy cat sitting on a windowsill"
 
 # 指定宽高比（16:9 宽屏适合桌面壁纸）
-bun run skills/minimax-image/scripts/generate.ts "女孩在图书馆窗前" --aspect-ratio 16:9
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "girl in a library" --aspect-ratio 16:9
 
 # 竖屏比例（9:16 适合手机壁纸）
-bun run skills/minimax-image/scripts/generate.ts "未来城市天际线" --aspect-ratio 9:16
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "futuristic city skyline" --aspect-ratio 9:16
 
-# 批量生成 4 张图片
-bun run skills/minimax-image/scripts/generate.ts "梦幻森林" -n 4 --output-dir ./outputs
+# 批量生成 4 张图片，指定输出目录
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "dreamy forest" -n 4 --output-dir ./outputs
 
-# 使用 URL 格式返回（适合快速预览）
-bun run skills/minimax-image/scripts/generate.ts "抽象艺术" --format url
+# 自定义文件名前缀
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "abstract art" --prefix abstract_1
 ```
 
-### 方式二：Python 函数调用
+### 图生图（保持主体一致性）
 
-```python
-import sys
-sys.path.insert(0, 'scripts')
-from generate_image import generate_image
+提供一张参考图，生成保持人物/物体特征一致的新图片。
 
-# 基础文生图
-paths = generate_image(
-    prompt="一个穿白色T恤的男人站在威尼斯海滩前",
-    aspect_ratio="16:9",
-    n=2,
-    output_dir="./outputs"
-)
-print(f"已生成: {paths}")
-
-# 使用 URL 格式（不下载，只返回链接）
-paths = generate_image(
-    prompt="未来城市天际线",
-    response_format="url",
-    output_dir="./outputs"
-)
+```bash
+# 使用参考图 URL，生成保持角色一致的新图片
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts \
+  "girl reading by the window, sunlight" \
+  --reference-image "https://example.com/reference_face.jpg"
 ```
+
+**CRITICAL**: 参考图必须是单人正面清晰照片，模型才能更好地理解人像信息。支持公网 URL 或 base64 格式。
 
 ## API 参数说明
 
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `prompt` | string | 必填 | 图片描述文本，英文描述效果更好 |
+| `prompt` | string | 必填 | 图片描述文本，最长 1500 字符，英文描述效果更好 |
 | `model` | string | `image-01` | 模型名称 |
 | `aspect_ratio` | string | `1:1` | 宽高比，见下方支持列表 |
-| `response_format` | string | `base64` | 返回格式：`base64` 或 `url` |
+| `response_format` | string | `base64` | 返回格式：`base64` 或 `url`（url 有效期 24 小时） |
 | `n` | int | `1` | 生成数量，1-9 张 |
 | `output_dir` | string | `.` | 图片保存目录 |
+| `prefix` | string | `image_{timestamp}` | 输出文件名前缀 |
+| `subject_reference` | object | 无 | 图生图主体参考（见下方） |
+
+### CLI 参数
+
+| 参数 | 缩写 | 说明 |
+|------|------|------|
+| `--aspect-ratio` | `-r` | 宽高比 |
+| `--output-dir` | `-o` | 输出目录 |
+| `--format` | `-f` | 返回格式：base64 / url |
+| `--n` | `-n` | 生成数量 1-9 |
+| `--prefix` | `-p` | 文件名前缀 |
+| `--reference-image` | `-i` | 参考图 URL（图生图） |
+| `--help` | `-h` | 显示帮助信息 |
 
 ### 支持的宽高比
 
-| 比例 | 适用场景 |
-|------|----------|
-| `1:1` | 正方形，社交媒体头像、Instagram |
-| `16:9` | 宽屏，桌面壁纸、视频封面 |
-| `9:16` | 竖屏，手机壁纸、短视频封面 |
-| `4:3` | 标准屏幕，PPT 配图 |
-| `3:4` | 竖版标准，海报 |
-| `3:2` | 摄影比例，风景照片风格 |
-| `2:3` | 竖版摄影，人像照片风格 |
-| `21:9` | 超宽屏，电影感画面 |
-
-## 图生图（保持主体一致性）
-
-当需要保持人物/物体一致性时，使用 `subject_reference` 参数：
-
-### 示例：保持角色一致性
-
-```python
-import requests
-import os
-
-url = "https://api.minimaxi.com/v1/image_generation"
-api_key = os.environ.get("MINIMAX_API_KEY")
-headers = {"Authorization": f"Bearer {api_key}"}
-
-payload = {
-    "model": "image-01",
-    "prompt": "女孩在图书馆的窗户前，看向远方，阳光明媚",
-    "aspect_ratio": "16:9",
-    "subject_reference": [
-        {
-            "type": "character",  # 保持角色一致
-            "image_file": "https://example.com/reference.jpg",  # 参考图 URL
-        }
-    ],
-    "response_format": "url",
-}
-
-response = requests.post(url, headers=headers, json=payload)
-response.raise_for_status()
-print(response.json())
-```
+| 比例 | 分辨率 | 适用场景 |
+|------|--------|----------|
+| `1:1` | 1024x1024 | 正方形，社交媒体头像 |
+| `16:9` | 1280x720 | 宽屏，桌面壁纸、视频封面 |
+| `9:16` | 720x1280 | 竖屏，手机壁纸、短视频封面 |
+| `4:3` | 1152x864 | 标准屏幕，PPT 配图 |
+| `3:4` | 864x1152 | 竖版标准，海报 |
+| `3:2` | 1248x832 | 摄影比例，风景照片风格 |
+| `2:3` | 832x1248 | 竖版摄影，人像照片风格 |
+| `21:9` | 1344x576 | 超宽屏，电影感画面（仅 image-01） |
 
 ### subject_reference 参数说明
 
-| 参数 | 类型 | 说明 |
+| 字段 | 类型 | 说明 |
 |------|------|------|
-| `type` | string | 参考类型：`character`（人物）、`object`（物体） |
-| `image_file` | string | 参考图片的 URL 地址 |
+| `type` | string | 主体类型，目前仅支持 `character`（人物） |
+| `image_file` | string | 参考图片，支持公网 URL 或 `data:image/jpeg;base64,{data}` 格式 |
 
 ## ❌ WRONG / ✅ CORRECT
 
-### ❌ WRONG - 不使用环境变量
-
-```python
-# 不要在代码中硬编码 API key
-api_key = "sk-abc123..."
-generate_image(prompt="...", api_key=api_key)
-```
-
-### ✅ CORRECT - 使用环境变量
-
-```python
-# 从环境变量读取，更安全
-import os
-api_key = os.environ.get("MINIMAX_API_KEY")
-generate_image(prompt="...")
-```
-
-### ❌ WRONG - 生成后不检查文件
-
-```python
-# 不要忽略返回值
-paths = generate_image(prompt="...")
-# 没有后续处理，不知道图片保存到哪里
-```
-
-### ✅ CORRECT - 确认生成结果
-
-```python
-# 检查生成的图片路径
-paths = generate_image(prompt="...", output_dir="./images")
-for path in paths:
-    if os.path.exists(path):
-        print(f"✓ 图片已保存: {path}")
-```
-
-### ❌ WRONG - 中文提示词不翻译
+### ❌ WRONG - 中文提示词效果差
 
 ```bash
-# 中文描述效果可能不如英文
-bun run scripts/generate.ts "一个可爱的猫咪"
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "一个可爱的猫咪坐在窗台上"
 ```
 
-### ✅ CORRECT - 使用英文提示词
+### ✅ CORRECT - 英文提示词效果更好
 
 ```bash
-# 英文描述通常效果更好
-bun run scripts/generate.ts "a cute fluffy cat sitting on a windowsill, sunlight, warm colors"
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "a cute fluffy cat sitting on a windowsill, sunlight, warm colors"
+```
+
+### ❌ WRONG - 参考图不是正面清晰照片
+
+```bash
+# 侧脸、模糊、多人照片，模型难以提取特征
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "girl reading" -i "https://example.com/group_photo.jpg"
+```
+
+### ✅ CORRECT - 使用单人正面清晰照片
+
+```bash
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "girl reading" -i "https://example.com/clear_frontal_face.jpg"
+```
+
+### ❌ WRONG - 忘记指定输出目录，图片散落在当前目录
+
+```bash
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "a cute cat" -n 4
+```
+
+### ✅ CORRECT - 指定输出目录和文件名前缀
+
+```bash
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts "a cute cat" -n 4 --output-dir ./images --prefix cat
 ```
 
 ## 错误处理
 
-### 常见错误及解决方案
-
 | 错误信息 | 原因 | 解决方案 |
 |----------|------|----------|
-| `MINIMAX_API_KEY not set` | 未设置环境变量 | `export MINIMAX_API_KEY="xxx"` |
-| `HTTP Error 401` | API Key 无效 | 检查 Key 是否正确 |
-| `HTTP Error 429` | 请求过于频繁 | 降低请求频率，或检查配额 |
-| `Prompt too long` | 提示词过长 | 缩短 prompt，建议 < 500 字符 |
-| `Invalid aspect_ratio` | 宽高比不支持 | 使用支持的宽高比列表中的值 |
-
-### 在代码中处理错误
-
-```python
-from generate_image import generate_image
-import os
-
-# 先检查环境变量
-if not os.environ.get("MINIMAX_API_KEY"):
-    print("错误: 请先设置 MINIMAX_API_KEY 环境变量")
-    exit(1)
-
-try:
-    paths = generate_image(
-        prompt="a beautiful sunset over mountains",
-        aspect_ratio="16:9",
-        n=2
-    )
-    print(f"✓ 成功生成 {len(paths)} 张图片")
-except Exception as e:
-    print(f"✗ 生成失败: {e}")
-```
+| `MINIMAX_API_KEY environment variable is not set` | 未设置环境变量 | `export MINIMAX_API_KEY="xxx"` |
+| `HTTP 错误: 401` | API Key 无效 | 检查 Key 是否正确 |
+| `HTTP 错误: 429` | 请求过于频繁 | 降低请求频率，或检查配额 |
+| `API 错误: ...` | API 返回错误 | 检查错误信息，常见原因：prompt 过长、参数不合法 |
+| `生成数量必须在 1-9 之间` | n 参数超出范围 | 使用 1-9 之间的值 |
 
 ## 脚本帮助
 
 ```bash
-bun run scripts/generate.ts -- --help
-```
-
-输出示例：
-```
-usage: generate_image.py [-h] [--aspect-ratio ASPECT_RATIO]
-                        [--output-dir OUTPUT_DIR]
-                        [--format {base64,url}] [--n N]
-                        prompt
-
-Minimax Image01 文生图
-
-positional arguments:
-  prompt                图片描述文本（建议用英文）
-
-optional arguments:
-  -h, --help            显示帮助信息
-  --aspect-ratio, -r    宽高比: 16:9, 4:3, 3:2, 2:3, 3:4, 9:16, 21:9, 1:1
-  --output-dir, -o      输出目录 (默认当前目录)
-  --format, -f          返回格式: base64 或 url
-  --n, -n               生成数量 1-9
+bun run ${CLAUDE_SKILL_DIR}/scripts/generate.ts -- --help
 ```
 
 ## 最佳实践
 
-1. **批量生成前检查配额**：使用 `minimax-usage` skill 先检查余额
-2. **提示词优化**：使用英文、详细描述场景、光线、风格
-3. **指定输出目录**：避免图片散落在当前目录
-4. **合理的 n 值**：批量生成时 n=4 是较好的平衡点
+1. **CRITICAL**: 英文提示词效果远好于中文，务必使用英文描述
+2. **批量生成前检查配额**：使用 `minimax-usage` skill 先检查余额
+3. **提示词优化**：详细描述场景、光线、风格，效果更好
+4. **指定输出目录**：使用 `--output-dir` 避免图片散落在当前目录
+5. **自定义文件名前缀**：使用 `--prefix` 方便管理生成的图片
+6. **合理的 n 值**：批量生成时 n=4 是较好的平衡点
+7. **图生图参考图**：使用单人正面清晰照片，效果最佳
