@@ -1,5 +1,5 @@
 {
-  "name": "minimax-token-plan-skills",
+  "name": "minimax-plugins",
   "description": "MiniMax Token Plan Skills - 语音合成、文生图、联网搜索、图片分析、用量查询",
   "owner": { "name": "nmvr2600" },
   "plugins": [
