@@ -108,7 +108,7 @@ async function createSpeechTask(
   model: string,
   speed: number,
   vol: number,
-  pitch: number
+  pitch: number,
 ): Promise<string> {
   const url = `${apiHost}/v1/t2a_async_v2`;
 
@@ -158,7 +158,11 @@ async function createSpeechTask(
 /**
  * 查询任务状态
  */
-async function queryTask(apiKey: string, apiHost: string, taskId: string): Promise<QueryTaskResponse> {
+async function queryTask(
+  apiKey: string,
+  apiHost: string,
+  taskId: string,
+): Promise<QueryTaskResponse> {
   const url = `${apiHost}/v1/query/t2a_async_query_v2?task_id=${taskId}`;
 
   const response = await fetch(url, {
@@ -182,7 +186,7 @@ async function downloadAudio(
   apiKey: string,
   apiHost: string,
   fileId: string,
-  outputPath: string
+  outputPath: string,
 ): Promise<boolean> {
   // 获取下载链接
   const url = `${apiHost}/v1/files/retrieve?file_id=${fileId}`;
@@ -254,30 +258,17 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
   }
 
   console.log("🎙️ 正在创建语音合成任务...");
-  const taskId = await createSpeechTask(
-    apiKey,
-    apiHost,
-    text,
-    voiceId,
-    model,
-    speed,
-    vol,
-    pitch
-  );
+  const taskId = await createSpeechTask(apiKey, apiHost, text, voiceId, model, speed, vol, pitch);
   console.log(`✓ 任务已创建: ${taskId}`);
 
   // 轮询等待任务完成
   const maxRetries = 60; // 最多等待 2 分钟
   for (let i = 0; i < maxRetries; i++) {
     const result = await queryTask(apiKey, apiHost, taskId);
-    const status =
-      result.status ||
-      (result.data && result.data.status) ||
-      "unknown";
+    const status = result.status || (result.data && result.data.status) || "unknown";
 
     if (status.toLowerCase() === "success") {
-      const fileId =
-        result.file_id || (result.data && result.data.file_id);
+      const fileId = result.file_id || (result.data && result.data.file_id);
       console.log("✓ 任务完成，正在下载音频...");
       await downloadAudio(apiKey, apiHost, fileId as string, outputFile);
       console.log(`✅ 音频已保存: ${outputFile}`);

@@ -46,7 +46,7 @@ async function makeRequest(
   apiKey: string,
   apiHost: string,
   endpoint: string,
-  payload: unknown
+  payload: unknown,
 ): Promise<unknown> {
   const url = `${apiHost}${endpoint}`;
 
@@ -55,7 +55,7 @@ async function makeRequest(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         "MM-API-Source": "Minimax-Standalone-Script",
       },
       body: JSON.stringify(payload),
@@ -65,7 +65,9 @@ async function makeRequest(
       throw new MinimaxRequestError(`HTTP 错误: ${response.status} - ${response.statusText}`);
     }
 
-    const result = await response.json() as { base_resp?: { status_code?: number; status_msg?: string } };
+    const result = (await response.json()) as {
+      base_resp?: { status_code?: number; status_msg?: string };
+    };
 
     // 检查 API 响应状态码
     const baseResp = result.base_resp || {};

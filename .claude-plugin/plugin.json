@@ -1,16 +1,16 @@
 {
-    "name": "minimax-token-plan-skills",
-    "version": "1.0.0",
-    "description": "MiniMax Token Plan Skills - 语音合成、文生图、联网搜索、图片分析、用量查询",
-    "author": {"name": "nmvr2600"},
-    "license": "MIT",
-    "keywords": [
-        "minimax",
-        "tts",
-        "text-to-speech",
-        "image-generation",
-        "image-analysis",
-        "web-search",
-        "api"
-    ]
+  "name": "minimax-token-plan-skills",
+  "version": "1.0.0",
+  "description": "MiniMax Token Plan Skills - 语音合成、文生图、联网搜索、图片分析、用量查询",
+  "author": { "name": "nmvr2600" },
+  "license": "MIT",
+  "keywords": [
+    "minimax",
+    "tts",
+    "text-to-speech",
+    "image-generation",
+    "image-analysis",
+    "web-search",
+    "api"
+  ]
 }

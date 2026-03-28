@@ -246,8 +246,7 @@ function parseArgs(): {
 // 主函数
 async function main(): Promise<void> {
   try {
-    const { prompt, aspectRatio, outputDir, format, n, prefix, referenceImage } =
-      parseArgs();
+    const { prompt, aspectRatio, outputDir, format, n, prefix, referenceImage } = parseArgs();
 
     // 图生图：构建 subject_reference
     let subjectReference: SubjectReference | undefined;

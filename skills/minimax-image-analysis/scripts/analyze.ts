@@ -159,7 +159,7 @@ async function processImageUrl(imageUrl: string): Promise<string> {
 async function makeRequest(
   apiKey: string,
   apiHost: string,
-  payload: unknown
+  payload: unknown,
 ): Promise<AnalysisResponse> {
   const url = `${apiHost}/v1/coding_plan/vlm`;
 
@@ -168,7 +168,7 @@ async function makeRequest(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         "MM-API-Source": "Minimax-Standalone-Script",
       },
       body: JSON.stringify(payload),
@@ -211,7 +211,7 @@ async function analyzeImage(
   apiKey: string,
   apiHost: string,
   imageSource: string,
-  prompt?: string
+  prompt?: string,
 ): Promise<string> {
   if (!imageSource) {
     throw new MinimaxRequestError("图像源不能为空");
