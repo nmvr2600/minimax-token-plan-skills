@@ -15,6 +15,12 @@ class MinimaxError extends Error {
   }
 }
 
+// subject_reference 主体参考参数
+interface SubjectReference {
+  type: string; // 目前仅支持 "character"
+  image_file: string; // 公网 URL 或 data:image/jpeg;base64,{data}
+}
+
 interface GenerateImageOptions {
   prompt: string;
   apiKey?: string;
@@ -24,6 +30,8 @@ interface GenerateImageOptions {
   responseFormat?: "base64" | "url";
   n?: number;
   filenamePrefix?: string;
+  // 图生图：提供参考图保持主体一致性
+  subjectReference?: SubjectReference;
 }
 
 interface ImageGenerationResponse {
@@ -50,6 +58,7 @@ async function generateImage(options: GenerateImageOptions): Promise<string[]> {
     responseFormat = "base64",
     n = 1,
     filenamePrefix,
+    subjectReference,
   } = options;
 
   // 获取 API Key
@@ -62,13 +71,18 @@ async function generateImage(options: GenerateImageOptions): Promise<string[]> {
   const apiHost = process.env.MINIMAX_API_HOST || "https://api.minimaxi.com";
   const url = `${apiHost}/v1/image_generation`;
 
-  const payload = {
+  const payload: Record<string, unknown> = {
     model,
     prompt,
     aspect_ratio: aspectRatio,
     response_format: responseFormat,
     n: Math.min(n, 9), // 最多9张
   };
+
+  // 图生图：添加主体参考图
+  if (subjectReference) {
+    payload.subject_reference = [subjectReference];
+  }
 
   console.log(`正在生成 ${n} 张图片...`);
 
@@ -148,11 +162,13 @@ function showHelp(): void {
   console.log("  -f, --format        返回格式: base64 或 url (默认: base64)");
   console.log("  -n, --n             生成数量 1-9 (默认: 1)");
   console.log("  -p, --prefix        文件名前缀");
+  console.log("  -i, --reference-image  参考图 URL（图生图，保持主体一致性）");
   console.log("");
   console.log("示例:");
   console.log('  bun run generate.ts "a cute cat"');
   console.log('  bun run generate.ts "a cute cat" -n 4 -r 16:9');
   console.log('  bun run generate.ts "a cute cat" -o ./images -p cat');
+  console.log('  bun run generate.ts "girl reading" -i https://example.com/face.jpg');
 }
 
 // 解析命令行参数
@@ -163,6 +179,7 @@ function parseArgs(): {
   format: "base64" | "url";
   n: number;
   prefix?: string;
+  referenceImage?: string;
 } {
   const args = process.argv.slice(2);
 
@@ -178,6 +195,7 @@ function parseArgs(): {
   let format: "base64" | "url" = "base64";
   let n = 1;
   let prefix: string | undefined;
+  let referenceImage: string | undefined;
 
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
@@ -214,16 +232,31 @@ function parseArgs(): {
         prefix = nextArg;
         i++;
         break;
+      case "-i":
+      case "--reference-image":
+        referenceImage = nextArg;
+        i++;
+        break;
     }
   }
 
-  return { prompt, aspectRatio, outputDir, format, n, prefix };
+  return { prompt, aspectRatio, outputDir, format, n, prefix, referenceImage };
 }
 
 // 主函数
 async function main(): Promise<void> {
   try {
-    const { prompt, aspectRatio, outputDir, format, n, prefix } = parseArgs();
+    const { prompt, aspectRatio, outputDir, format, n, prefix, referenceImage } =
+      parseArgs();
+
+    // 图生图：构建 subject_reference
+    let subjectReference: SubjectReference | undefined;
+    if (referenceImage) {
+      subjectReference = {
+        type: "character",
+        image_file: referenceImage,
+      };
+    }
 
     const paths = await generateImage({
       prompt,
@@ -232,6 +265,7 @@ async function main(): Promise<void> {
       responseFormat: format,
       n,
       filenamePrefix: prefix,
+      subjectReference,
     });
 
     console.log(`\n成功! 共生成 ${paths.length} 张图片`);
