@@ -11,6 +11,6 @@
         "image-generation",
         "image-analysis",
         "web-search",
-        "api",
-    ],
+        "api"
+    ]
 }
