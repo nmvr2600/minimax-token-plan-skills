@@ -8,7 +8,7 @@
             "description": "MiniMax Token Plan Skills - 语音合成、文生图、联网搜索、图片分析、用量查询",
             "version": "1.0.0",
             "source": "./",
-            "author": {"name": "nmvr2600"},
+            "author": {"name": "nmvr2600"}
         }
-    ],
+    ]
 }
