@@ -1,8 +1,16 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+
+# 缓存
+.ruff_cache/
 __pycache__/
 *.pyc
 .pytest_cache/
 
-# Generated images (allow samples directory)
+# 生成的文件（保留 samples 目录）
 *.jpeg
 *.jpg
 *.png
