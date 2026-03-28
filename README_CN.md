@@ -26,17 +26,25 @@
 
 ## 安装方式
 
-### 全局安装（所有项目可用）
+### Claude Code
 
 ```bash
-ln -s /Users/meng/workspace/minimax-token-plan-skills ~/.claude/skills/minimax-token-plan-skills
+# 添加 marketplace
+claude plugin marketplace add nmvr2600/minimax-token-plan-skills
+
+# 安装插件
+claude plugin install minimax-token-plan-skills@minimax-plugins
 ```
 
-### 项目级安装（仅当前项目）
+### OpenClaw
 
-```bash
-ln -s /Users/meng/workspace/minimax-token-plan-skills /你的项目路径/.claude/skills/minimax-token-plan-skills
+直接发送以下消息给 OpenClaw：
+
 ```
+请安装这里的技能 https://github.com/nmvr2600/minimax-token-plan-skills
+```
+
+> **注意：** 使用这些技能需要 MiniMax Token Plan 的 API Key。如果使用国际站，还需要设置 `MINIMAX_API_HOST`（见下方[配置说明](#配置说明)）。
 
 ## 配置说明
 
@@ -53,7 +61,7 @@ export MINIMAX_API_KEY="your-api-key-here"
 默认为 `https://api.minimaxi.com`。如需使用 MiniMax 国际站：
 
 ```bash
-export MINIMAX_API_HOST="https://api.minimax.chat"
+export MINIMAX_API_HOST="https://api.minimax.io"
 ```
 
 ## 使用示例

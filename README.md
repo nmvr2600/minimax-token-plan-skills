@@ -26,17 +26,25 @@ A collection of Claude Code skills for MiniMax Token Plan subscribers. Generate 
 
 ## Installation
 
-### Global Installation (Available in all projects)
+### Claude Code
 
 ```bash
-ln -s /Users/meng/workspace/minimax-token-plan-skills ~/.claude/skills/minimax-token-plan-skills
+# Add marketplace
+claude plugin marketplace add nmvr2600/minimax-token-plan-skills
+
+# Install plugin
+claude plugin install minimax-token-plan-skills@minimax-plugins
 ```
 
-### Project-level Installation (Current project only)
+### OpenClaw
 
-```bash
-ln -s /Users/meng/workspace/minimax-token-plan-skills /path/to/your/project/.claude/skills/minimax-token-plan-skills
+Send the following message to OpenClaw:
+
 ```
+Please install the skills from https://github.com/nmvr2600/minimax-token-plan-skills
+```
+
+> **Note:** These skills require a MiniMax Token Plan API Key. If you are using the international endpoint, you also need to set `MINIMAX_API_HOST` (see [Configuration](#configuration) below).
 
 ## Configuration
 
@@ -53,7 +61,7 @@ export MINIMAX_API_KEY="your-api-key-here"
 Default is `https://api.minimaxi.com`. To use MiniMax international endpoint:
 
 ```bash
-export MINIMAX_API_HOST="https://api.minimax.chat"
+export MINIMAX_API_HOST="https://api.minimax.io"
 ```
 
 ## Usage Examples
