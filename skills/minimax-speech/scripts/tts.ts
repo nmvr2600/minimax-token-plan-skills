@@ -233,7 +233,7 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
   const {
     text,
     outputFile = "output.mp3",
-    voiceId = "female-tianmei",
+    voiceId = "Chinese (Mandarin)_Reliable_Executive",
     model = "speech-2.8-hd",
     speed = 1.0,
     vol = 1,
@@ -330,7 +330,7 @@ function parseArgs(): {
 
   const text = args[0];
   let output = "output.mp3";
-  let voice = "female-tianmei";
+  let voice = "Chinese (Mandarin)_Reliable_Executive";
   let model = "speech-2.8-hd";
   let speed = 1.0;
   let vol = 1;
