@@ -120,12 +120,13 @@ async function createSpeechTask(
       voice_id: voiceId,
       speed: Number.isInteger(speed) ? Math.floor(speed) : speed,
       vol: Math.floor(vol),
-      pitch: Number.isInteger(pitch) ? Math.floor(pitch) : pitch,
+      pitch: pitch,
     },
     audio_setting: {
-      audio_sample_rate: 32000,
+      sample_rate: 32000,
       bitrate: 128000,
       format: "mp3",
+      channel: 2,
     },
   };
 
@@ -235,8 +236,8 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
     voiceId = "female-tianmei",
     model = "speech-2.8-hd",
     speed = 1.0,
-    vol = 10,
-    pitch = 1.0,
+    vol = 1,
+    pitch = 0,
     apiKey: providedKey,
     apiHost: providedHost,
   } = options;
@@ -332,8 +333,8 @@ function parseArgs(): {
   let voice = "female-tianmei";
   let model = "speech-2.8-hd";
   let speed = 1.0;
-  let vol = 10;
-  let pitch = 1.0;
+  let vol = 1;
+  let pitch = 0;
 
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
