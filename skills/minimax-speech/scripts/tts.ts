@@ -126,10 +126,10 @@ async function synthesizeSpeechSync(
       pitch: Math.floor(pitch),
     },
     audio_setting: {
-      sample_rate: 32000,
-      bitrate: 128000,
+      sample_rate: 44100,
+      bitrate: 256000,
       format: "mp3",
-      channel: 1,
+      channel: 2,
     },
   };
 
@@ -185,10 +185,10 @@ async function createSpeechTaskAsync(
       pitch: Math.floor(pitch),
     },
     audio_setting: {
-      sample_rate: 32000,
-      bitrate: 128000,
+      sample_rate: 44100,
+      bitrate: 256000,
       format: "mp3",
-      channel: 1,
+      channel: 2,
     },
   };
 
