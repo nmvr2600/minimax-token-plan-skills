@@ -27,7 +27,7 @@ interface TTSOptions {
 interface CreateTaskResponse {
   task_id?: string;
   data?: {
-    audio?: string; // base64 编码的音频数据
+    audio?: string; // hex 编码的音频数据
   };
   base_resp?: {
     status_code?: number;
@@ -102,7 +102,7 @@ function extractMp3FromTar(tarData: ArrayBuffer): Uint8Array | null {
 
 /**
  * 同步语音合成 - 短文本直接返回音频数据
- * @returns base64 编码的音频数据
+ * @returns hex 编码的音频数据
  */
 async function synthesizeSpeechSync(
   apiKey: string,
@@ -121,15 +121,15 @@ async function synthesizeSpeechSync(
     text: text,
     voice_setting: {
       voice_id: voiceId,
-      speed: Number.isInteger(speed) ? Math.floor(speed) : speed,
-      vol: Math.floor(vol),
-      pitch: pitch,
+      speed: speed,
+      vol: vol,
+      pitch: Math.floor(pitch),
     },
     audio_setting: {
       sample_rate: 32000,
       bitrate: 128000,
       format: "mp3",
-      channel: 2,
+      channel: 1,
     },
   };
 
@@ -180,15 +180,15 @@ async function createSpeechTaskAsync(
     text: text,
     voice_setting: {
       voice_id: voiceId,
-      speed: Number.isInteger(speed) ? Math.floor(speed) : speed,
-      vol: Math.floor(vol),
-      pitch: pitch,
+      speed: speed,
+      vol: vol,
+      pitch: Math.floor(pitch),
     },
     audio_setting: {
       sample_rate: 32000,
       bitrate: 128000,
       format: "mp3",
-      channel: 2,
+      channel: 1,
     },
   };
 
@@ -358,12 +358,8 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
     audioData = await pollTaskResult(apiKey, apiHost, taskId);
   }
 
-  // 解码并保存音频
-  const binaryString = atob(audioData);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
+  // 解码并保存音频（API 返回 hex 编码）
+  const bytes = Buffer.from(audioData, "hex");
 
   await Bun.write(outputFile, bytes);
   console.log(`✅ 音频已保存: ${outputFile}`);
