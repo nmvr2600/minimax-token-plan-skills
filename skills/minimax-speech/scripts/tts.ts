@@ -301,7 +301,7 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
   const {
     text,
     outputFile = "output.mp3",
-    voiceId = "Chinese (Mandarin)_Reliable_Executive",
+    voiceId = "male-qn-jingying",
     model = "speech-2.8-hd",
     speed = 1.0,
     vol = 1,

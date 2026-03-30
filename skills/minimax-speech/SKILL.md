@@ -101,7 +101,7 @@ const output = await textToSpeech({
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `text` | string | 必填 | 要合成的文本 |
-| `--voice`, `-v` | string | `Chinese (Mandarin)_Reliable_Executive` | 音色ID |
+| `--voice`, `-v` | string | `male-qn-jingying` | 音色ID |
 | `--speed`, `-s` | float | `1.0` | 语速 0.5-2.0 |
 | `--vol` | float | `1` | 音量 0-10 |
 | `--pitch`, `-p` | int | `0` | 音调 -12 到 12 |
