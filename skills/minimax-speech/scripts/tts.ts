@@ -26,6 +26,9 @@ interface TTSOptions {
 
 interface CreateTaskResponse {
   task_id?: string;
+  data?: {
+    audio?: string; // base64 编码的音频数据
+  };
   base_resp?: {
     status_code?: number;
     status_msg?: string;
@@ -98,9 +101,69 @@ function extractMp3FromTar(tarData: ArrayBuffer): Uint8Array | null {
 }
 
 /**
- * 创建语音合成任务
+ * 同步语音合成 - 短文本直接返回音频数据
+ * @returns base64 编码的音频数据
  */
-async function createSpeechTask(
+async function synthesizeSpeechSync(
+  apiKey: string,
+  apiHost: string,
+  text: string,
+  voiceId: string,
+  model: string,
+  speed: number,
+  vol: number,
+  pitch: number,
+): Promise<string> {
+  const url = `${apiHost}/v1/t2a_v2`;
+
+  const payload = {
+    model: model,
+    text: text,
+    voice_setting: {
+      voice_id: voiceId,
+      speed: Number.isInteger(speed) ? Math.floor(speed) : speed,
+      vol: Math.floor(vol),
+      pitch: pitch,
+    },
+    audio_setting: {
+      sample_rate: 32000,
+      bitrate: 128000,
+      format: "mp3",
+      channel: 2,
+    },
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new MinimaxError(`HTTP 错误: ${response.status}`);
+  }
+
+  const result = (await response.json()) as CreateTaskResponse;
+
+  if (result.base_resp && result.base_resp.status_code !== 0) {
+    throw new MinimaxError(`API 错误: ${result.base_resp.status_msg}`);
+  }
+
+  if (!result.data?.audio) {
+    throw new MinimaxError("同步接口未返回音频数据");
+  }
+
+  return result.data.audio;
+}
+
+/**
+ * 异步语音合成 - 长文本返回任务 ID
+ * @returns task_id，需要轮询查询结果
+ */
+async function createSpeechTaskAsync(
   apiKey: string,
   apiHost: string,
   text: string,
@@ -112,7 +175,6 @@ async function createSpeechTask(
 ): Promise<string> {
   const url = `${apiHost}/v1/t2a_async_v2`;
 
-  // API 对参数类型敏感，确保使用正确的类型
   const payload = {
     model: model,
     text: text,
@@ -150,7 +212,7 @@ async function createSpeechTask(
   }
 
   if (!result.task_id) {
-    throw new MinimaxError("未返回任务 ID");
+    throw new MinimaxError("异步接口未返回任务 ID");
   }
 
   return result.task_id;
@@ -226,8 +288,14 @@ async function downloadAudio(
   return true;
 }
 
+// 同步/异步分界线
+// 同步接口限制 < 10000 字符，超过 3000 字符推荐异步或流式
+const SYNC_TEXT_LENGTH_LIMIT = 3000;
+
 /**
  * 完整的文本转语音流程
+ * - 短文本（≤3000字）：同步接口，直接返回音频数据
+ * - 长文本（>3000字）：异步接口，轮询查询任务状态
  */
 async function textToSpeech(options: TTSOptions): Promise<string> {
   const {
@@ -242,7 +310,6 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
     apiHost: providedHost,
   } = options;
 
-  // 获取配置
   const apiKey = providedKey || process.env.MINIMAX_API_KEY;
   let apiHost = providedHost || process.env.MINIMAX_API_HOST;
 
@@ -258,12 +325,57 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
     throw new MinimaxError(`文本过长: ${text.length} 字符，最大支持 10 万字符`);
   }
 
-  console.log("🎙️ 正在创建语音合成任务...");
-  const taskId = await createSpeechTask(apiKey, apiHost, text, voiceId, model, speed, vol, pitch);
-  console.log(`✓ 任务已创建: ${taskId}`);
+  let audioData: string;
 
-  // 轮询等待任务完成
-  const maxRetries = 60; // 最多等待 2 分钟
+  if (text.length <= SYNC_TEXT_LENGTH_LIMIT) {
+    // 短文本：同步接口
+    console.log("🎙️ 正在同步合成语音...");
+    audioData = await synthesizeSpeechSync(
+      apiKey,
+      apiHost,
+      text,
+      voiceId,
+      model,
+      speed,
+      vol,
+      pitch,
+    );
+  } else {
+    // 长文本：异步接口
+    console.log(`🎙️ 文本较长（${text.length}字），正在创建异步任务...`);
+    const taskId = await createSpeechTaskAsync(
+      apiKey,
+      apiHost,
+      text,
+      voiceId,
+      model,
+      speed,
+      vol,
+      pitch,
+    );
+    console.log(`✓ 任务已创建: ${taskId}`);
+
+    audioData = await pollTaskResult(apiKey, apiHost, taskId);
+  }
+
+  // 解码并保存音频
+  const binaryString = atob(audioData);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  await Bun.write(outputFile, bytes);
+  console.log(`✅ 音频已保存: ${outputFile}`);
+  return outputFile;
+}
+
+/**
+ * 轮询异步任务直到返回音频数据
+ */
+async function pollTaskResult(apiKey: string, apiHost: string, taskId: string): Promise<string> {
+  const maxRetries = 60;
+
   for (let i = 0; i < maxRetries; i++) {
     const result = await queryTask(apiKey, apiHost, taskId);
     const status = result.status || (result.data && result.data.status) || "unknown";
@@ -271,19 +383,21 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
     if (status.toLowerCase() === "success") {
       const fileId = result.file_id || (result.data && result.data.file_id);
       console.log("✓ 任务完成，正在下载音频...");
-      await downloadAudio(apiKey, apiHost, fileId as string, outputFile);
-      console.log(`✅ 音频已保存: ${outputFile}`);
-      return outputFile;
+      await downloadAudio(apiKey, apiHost, fileId as string, "/tmp/tts_async_result.mp3");
+
+      // 读取下载的音频文件并返回 base64
+      const fileData = await Bun.file("/tmp/tts_async_result.mp3").arrayBuffer();
+      const base64 = Buffer.from(fileData).toString("base64");
+      return base64;
     } else if (status.toLowerCase() === "failed") {
       throw new MinimaxError("语音合成任务失败");
     }
 
     if (i % 5 === 0) {
-      // 每 10 秒打印一次
       console.log(`  等待中... (${i + 1}/${maxRetries})`);
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // 等待 2 秒
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
   throw new MinimaxError("等待任务超时");
