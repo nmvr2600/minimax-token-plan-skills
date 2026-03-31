@@ -147,8 +147,8 @@ async function main(): Promise<void> {
     }
   }
 
-  const apiKey = process.env.MINIMAX_API_KEY;
-  let apiHost = process.env.MINIMAX_API_HOST || "https://api.minimaxi.com";
+  const apiKey = Bun.env.MINIMAX_API_KEY;
+  let apiHost = Bun.env.MINIMAX_API_HOST || "https://api.minimaxi.com";
 
   if (!apiKey) {
     console.error("错误: MINIMAX_API_KEY 环境变量未设置");

@@ -30,13 +30,13 @@ async function generateImage(options: GenerateImageOptions): Promise<string[]> {
   } = options;
 
   // 获取 API Key
-  const apiKey = providedKey || process.env.MINIMAX_API_KEY;
+  const apiKey = providedKey || Bun.env.MINIMAX_API_KEY;
   if (!apiKey) {
     throw new MinimaxError("MINIMAX_API_KEY environment variable is not set");
   }
 
   // 支持通过环境变量切换域名（中文站/国际站）
-  const apiHost = process.env.MINIMAX_API_HOST || "https://api.minimaxi.com";
+  const apiHost = Bun.env.MINIMAX_API_HOST || "https://api.minimaxi.com";
   const url = `${apiHost}/v1/image_generation`;
 
   const payload: Record<string, unknown> = {

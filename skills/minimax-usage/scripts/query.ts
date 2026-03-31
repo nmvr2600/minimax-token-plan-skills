@@ -124,7 +124,7 @@ async function main(): Promise<void> {
   }
 
   // 检查环境变量
-  const apiKey = process.env.MINIMAX_API_KEY;
+  const apiKey = Bun.env.MINIMAX_API_KEY;
   if (!apiKey) {
     console.error("Error: MINIMAX_API_KEY environment variable is not set");
     console.error("Please run: export MINIMAX_API_KEY='your_api_key'");
@@ -132,7 +132,7 @@ async function main(): Promise<void> {
   }
 
   // 支持通过环境变量切换域名（中文站/国际站）
-  const apiHost = process.env.MINIMAX_API_HOST || "https://www.minimaxi.com";
+  const apiHost = Bun.env.MINIMAX_API_HOST || "https://www.minimaxi.com";
 
   try {
     await queryUsage(apiKey, apiHost);

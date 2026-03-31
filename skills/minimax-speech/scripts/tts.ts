@@ -264,8 +264,8 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
     apiHost: providedHost,
   } = options;
 
-  const apiKey = providedKey || process.env.MINIMAX_API_KEY;
-  let apiHost = providedHost || process.env.MINIMAX_API_HOST;
+  const apiKey = providedKey || Bun.env.MINIMAX_API_KEY;
+  let apiHost = providedHost || Bun.env.MINIMAX_API_HOST;
 
   if (!apiKey) {
     throw new MinimaxError("MINIMAX_API_KEY 环境变量未设置");
