@@ -4,59 +4,13 @@
  * 用法: bun run skills/minimax-speech/scripts/tts.ts "要转换的文本" [--output output.mp3] [--voice female-tianmei]
  */
 
-// 自定义错误类
-class MinimaxError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "MinimaxError";
-  }
-}
-
-interface TTSOptions {
-  text: string;
-  outputFile?: string;
-  voiceId?: string;
-  model?: string;
-  speed?: number;
-  vol?: number;
-  pitch?: number;
-  apiKey?: string;
-  apiHost?: string;
-}
-
-interface CreateTaskResponse {
-  task_id?: string;
-  data?: {
-    audio?: string; // hex 编码的音频数据
-  };
-  base_resp?: {
-    status_code?: number;
-    status_msg?: string;
-  };
-}
-
-interface QueryTaskResponse {
-  status?: string;
-  file_id?: string;
-  data?: {
-    status?: string;
-    file_id?: string;
-  };
-  base_resp?: {
-    status_code?: number;
-    status_msg?: string;
-  };
-}
-
-interface FileRetrieveResponse {
-  file?: {
-    download_url?: string;
-  };
-  base_resp?: {
-    status_code?: number;
-    status_msg?: string;
-  };
-}
+import { MinimaxError } from "../../../scripts/vendor/minimax-core";
+import type {
+  TTSOptions,
+  CreateTaskResponse,
+  QueryTaskResponse,
+  FileRetrieveResponse,
+} from "../../../scripts/vendor/minimax-core";
 
 /**
  * 从 tar 包中提取 mp3 文件

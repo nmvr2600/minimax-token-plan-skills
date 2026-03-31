@@ -6,44 +6,12 @@
 
 import { mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
-
-// 自定义错误类
-class MinimaxError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "MinimaxError";
-  }
-}
-
-// subject_reference 主体参考参数
-interface SubjectReference {
-  type: string; // 目前仅支持 "character"
-  image_file: string; // 公网 URL 或 data:image/jpeg;base64,{data}
-}
-
-interface GenerateImageOptions {
-  prompt: string;
-  apiKey?: string;
-  model?: string;
-  aspectRatio?: string;
-  outputDir?: string;
-  responseFormat?: "base64" | "url";
-  n?: number;
-  filenamePrefix?: string;
-  // 图生图：提供参考图保持主体一致性
-  subjectReference?: SubjectReference;
-}
-
-interface ImageGenerationResponse {
-  data?: {
-    image_base64?: string[];
-    image_urls?: string[];
-  };
-  base_resp?: {
-    status_code?: number;
-    status_msg?: string;
-  };
-}
+import { MinimaxError, getConfig, makeRequest } from "../../../scripts/vendor/minimax-core";
+import type {
+  SubjectReference,
+  GenerateImageOptions,
+  ImageGenerationResponse,
+} from "../../../scripts/vendor/minimax-core";
 
 /**
  * 调用 Minimax Image01 API 生成图片

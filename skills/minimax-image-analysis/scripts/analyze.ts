@@ -26,41 +26,13 @@
  */
 
 import { exists } from "node:fs/promises";
-
-// 自定义错误类
-class MinimaxAuthError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "MinimaxAuthError";
-  }
-}
-
-class MinimaxRequestError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "MinimaxRequestError";
-  }
-}
-
-interface AnalysisResponse {
-  content?: string;
-  base_resp?: {
-    status_code?: number;
-    status_msg?: string;
-  };
-}
-
-// 从环境变量获取配置
-function getConfig(): { apiKey: string; apiHost: string } {
-  const apiKey = process.env.MINIMAX_API_KEY;
-  const apiHost = process.env.MINIMAX_API_HOST || "https://api.minimax.chat";
-
-  if (!apiKey) {
-    throw new MinimaxRequestError("MINIMAX_API_KEY environment variable is not set");
-  }
-
-  return { apiKey, apiHost };
-}
+import {
+  MinimaxAuthError,
+  MinimaxRequestError,
+  getConfig,
+  makeRequest,
+} from "../../../scripts/vendor/minimax-core";
+import type { AnalysisResponse } from "../../../scripts/vendor/minimax-core";
 
 // 默认提示词 - 全面分析图像内容并提取文本
 const DEFAULT_PROMPT = `请全面分析这张图像：
@@ -154,57 +126,6 @@ async function processImageUrl(imageUrl: string): Promise<string> {
 }
 
 /**
- * 发送 HTTP 请求到 MiniMax VLM API
- */
-async function makeRequest(
-  apiKey: string,
-  apiHost: string,
-  payload: unknown,
-): Promise<AnalysisResponse> {
-  const url = `${apiHost}/v1/coding_plan/vlm`;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "MM-API-Source": "Minimax-Standalone-Script",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      throw new MinimaxRequestError(`HTTP 错误: ${response.status} - ${response.statusText}`);
-    }
-
-    const result = (await response.json()) as AnalysisResponse;
-
-    // 检查 API 响应状态码
-    const baseResp = result.base_resp || {};
-    if (baseResp.status_code !== 0) {
-      const statusCode = baseResp.status_code;
-      const statusMsg = baseResp.status_msg || "";
-
-      if (statusCode === 1004) {
-        throw new MinimaxAuthError(`API 错误: ${statusMsg}, 请检查 API key 和 API host`);
-      } else if (statusCode === 2038) {
-        throw new MinimaxRequestError(`API 错误: ${statusMsg}, 需要完成实名认证`);
-      } else {
-        throw new MinimaxRequestError(`API 错误: ${statusCode}-${statusMsg}`);
-      }
-    }
-
-    return result;
-  } catch (error) {
-    if (error instanceof MinimaxAuthError || error instanceof MinimaxRequestError) {
-      throw error;
-    }
-    throw new MinimaxRequestError(`请求失败: ${(error as Error).message}`);
-  }
-}
-
-/**
  * 分析图像内容
  */
 async function analyzeImage(
@@ -228,7 +149,12 @@ async function analyzeImage(
     image_url: processedImageUrl,
   };
 
-  const result = await makeRequest(apiKey, apiHost, payload);
+  const result = (await makeRequest(
+    apiKey,
+    apiHost,
+    "/v1/coding_plan/vlm",
+    payload,
+  )) as AnalysisResponse;
 
   // 提取分析结果
   const content = result.content || "";
@@ -273,7 +199,7 @@ async function main(): Promise<void> {
   const prompt = args[1];
 
   try {
-    const { apiKey, apiHost } = getConfig();
+    const { apiKey, apiHost } = getConfig("https://api.minimax.chat");
     const result = await analyzeImage(apiKey, apiHost, imageSource, prompt);
 
     // 输出分析结果

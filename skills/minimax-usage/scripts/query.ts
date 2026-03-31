@@ -4,30 +4,8 @@
  * 用法: bun run skills/minimax-usage/scripts/query.ts
  */
 
-// 自定义错误类
-class MinimaxError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "MinimaxError";
-  }
-}
-
-interface ModelRemain {
-  model_name: string;
-  current_interval_total_count: number;
-  current_interval_usage_count: number;
-  remains_time: number;
-  start_time: number;
-  end_time: number;
-}
-
-interface UsageResponse {
-  model_remains?: ModelRemain[];
-  base_resp?: {
-    status_code?: number;
-    status_msg?: string;
-  };
-}
+import { MinimaxError, getConfig } from "../../../scripts/vendor/minimax-core";
+import type { ModelRemain, UsageResponse } from "../../../scripts/vendor/minimax-core";
 
 /**
  * 格式化日期时间
