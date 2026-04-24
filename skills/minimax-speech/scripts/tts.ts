@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * MiniMax 语音合成脚本
- * 用法: bun run skills/minimax-speech/scripts/tts.ts "要转换的文本" [--output output.mp3] [--voice female-tianmei]
+ * 用法: bun run skills/minimax-speech/scripts/tts.ts "要转换的文本" [--output output.mp3] [--voice female-tianmei] [--subtitle]
  */
 
 import { MinimaxError } from "../../../scripts/vendor/minimax-core";
@@ -11,6 +11,8 @@ import type {
   QueryTaskResponse,
   FileRetrieveResponse,
 } from "../../../scripts/vendor/minimax-core";
+import { writeFileSync } from "fs";
+import { join, dirname } from "path";
 
 /**
  * 从 tar 包中提取 mp3 文件
@@ -55,8 +57,37 @@ function extractMp3FromTar(tarData: ArrayBuffer): Uint8Array | null {
 }
 
 /**
+ * 将毫秒时间格式化为 SRT 时间格式 (HH:MM:SS,mmm)
+ */
+function formatSrtTime(ms: number): string {
+  const msInt = Math.floor(ms);
+  const hours = Math.floor(msInt / 3600000);
+  const minutes = Math.floor((msInt % 3600000) / 60000);
+  const seconds = Math.floor((msInt % 60000) / 1000);
+  const milliseconds = msInt % 1000;
+  
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")},${String(milliseconds).padStart(3, "0")}`;
+}
+
+/**
+ * 将字幕数据转换为 SRT 格式
+ */
+function convertToSrt(subtitles: Array<{text: string; time_begin: number; time_end: number}>): string {
+  const lines: string[] = [];
+  subtitles.forEach((item, index) => {
+    const startTime = formatSrtTime(item.time_begin);
+    const endTime = formatSrtTime(item.time_end);
+    lines.push(`${index + 1}`);
+    lines.push(`${startTime} --> ${endTime}`);
+    lines.push(item.text);
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+
+/**
  * 同步语音合成 - 短文本直接返回音频数据
- * @returns hex 编码的音频数据
+ * @returns hex 编码的音频数据和可选的字幕链接
  */
 async function synthesizeSpeechSync(
   apiKey: string,
@@ -67,10 +98,11 @@ async function synthesizeSpeechSync(
   speed: number,
   vol: number,
   pitch: number,
-): Promise<string> {
+  enableSubtitle: boolean = false,
+): Promise<{audio: string; subtitleFile?: string}> {
   const url = `${apiHost}/v1/t2a_v2`;
 
-  const payload = {
+  const payload: any = {
     model: model,
     text: text,
     voice_setting: {
@@ -86,6 +118,11 @@ async function synthesizeSpeechSync(
       channel: 2,
     },
   };
+  
+  // 开启字幕功能
+  if (enableSubtitle) {
+    payload.subtitle_enable = true;
+  }
 
   const response = await fetch(url, {
     method: "POST",
@@ -100,7 +137,7 @@ async function synthesizeSpeechSync(
     throw new MinimaxError(`HTTP 错误: ${response.status}`);
   }
 
-  const result = (await response.json()) as CreateTaskResponse;
+  const result = (await response.json()) as CreateTaskResponse & {data?: {subtitle_file?: string}};
 
   if (result.base_resp && result.base_resp.status_code !== 0) {
     throw new MinimaxError(`API 错误: ${result.base_resp.status_msg}`);
@@ -110,7 +147,10 @@ async function synthesizeSpeechSync(
     throw new MinimaxError("同步接口未返回音频数据");
   }
 
-  return result.data.audio;
+  return {
+    audio: result.data.audio,
+    subtitleFile: result.data.subtitle_file,
+  };
 }
 
 /**
@@ -126,10 +166,11 @@ async function createSpeechTaskAsync(
   speed: number,
   vol: number,
   pitch: number,
+  enableSubtitle: boolean = false,
 ): Promise<string> {
   const url = `${apiHost}/v1/t2a_async_v2`;
 
-  const payload = {
+  const payload: any = {
     model: model,
     text: text,
     voice_setting: {
@@ -145,6 +186,11 @@ async function createSpeechTaskAsync(
       channel: 2,
     },
   };
+  
+  // 开启字幕功能
+  if (enableSubtitle) {
+    payload.subtitle_enable = true;
+  }
 
   const response = await fetch(url, {
     method: "POST",
@@ -170,6 +216,30 @@ async function createSpeechTaskAsync(
   }
 
   return result.task_id;
+}
+
+/**
+ * 下载并保存字幕文件
+ */
+async function downloadSubtitle(subtitleUrl: string, outputPath: string): Promise<void> {
+  const response = await fetch(subtitleUrl);
+  if (!response.ok) {
+    throw new MinimaxError(`下载字幕失败: ${response.status}`);
+  }
+  
+  const subtitleContent = await response.text();
+  const subtitles = JSON.parse(subtitleContent);
+  
+  // 保存 JSON 格式
+  writeFileSync(outputPath, subtitleContent, "utf-8");
+  
+  // 保存 SRT 格式
+  const srtPath = outputPath.replace(/\.json$/, ".srt");
+  const srtContent = convertToSrt(subtitles);
+  writeFileSync(srtPath, srtContent, "utf-8");
+  
+  console.log(`✅ 字幕 JSON: ${outputPath}`);
+  console.log(`✅ 字幕 SRT: ${srtPath}`);
 }
 
 /**
@@ -251,7 +321,7 @@ const SYNC_TEXT_LENGTH_LIMIT = 3000;
  * - 短文本（≤3000字）：同步接口，直接返回音频数据
  * - 长文本（>3000字）：异步接口，轮询查询任务状态
  */
-async function textToSpeech(options: TTSOptions): Promise<string> {
+async function textToSpeech(options: TTSOptions & { enableSubtitle?: boolean }): Promise<string> {
   const {
     text,
     outputFile = "output.mp3",
@@ -262,6 +332,7 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
     pitch = 0,
     apiKey: providedKey,
     apiHost: providedHost,
+    enableSubtitle = false,
   } = options;
 
   const apiKey = providedKey || Bun.env.MINIMAX_API_KEY;
@@ -280,11 +351,15 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
   }
 
   let audioData: string;
+  let subtitleFile: string | undefined;
 
   if (text.length <= SYNC_TEXT_LENGTH_LIMIT) {
     // 短文本：同步接口
     console.log("🎙️ 正在同步合成语音...");
-    audioData = await synthesizeSpeechSync(
+    if (enableSubtitle) {
+      console.log("📝 已开启字幕功能");
+    }
+    const result = await synthesizeSpeechSync(
       apiKey,
       apiHost,
       text,
@@ -293,10 +368,16 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
       speed,
       vol,
       pitch,
+      enableSubtitle,
     );
+    audioData = result.audio;
+    subtitleFile = result.subtitleFile;
   } else {
     // 长文本：异步接口
     console.log(`🎙️ 文本较长（${text.length}字），正在创建异步任务...`);
+    if (enableSubtitle) {
+      console.log("📝 已开启字幕功能");
+    }
     const taskId = await createSpeechTaskAsync(
       apiKey,
       apiHost,
@@ -306,10 +387,13 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
       speed,
       vol,
       pitch,
+      enableSubtitle,
     );
     console.log(`✓ 任务已创建: ${taskId}`);
 
-    audioData = await pollTaskResult(apiKey, apiHost, taskId);
+    const result = await pollTaskResult(apiKey, apiHost, taskId, enableSubtitle);
+    audioData = result.audio;
+    subtitleFile = result.subtitleFile;
   }
 
   // 解码并保存音频（API 返回 hex 编码）
@@ -317,13 +401,25 @@ async function textToSpeech(options: TTSOptions): Promise<string> {
 
   await Bun.write(outputFile, bytes);
   console.log(`✅ 音频已保存: ${outputFile}`);
+
+  // 下载字幕文件
+  if (enableSubtitle && subtitleFile) {
+    const subtitleOutput = outputFile.replace(/\.mp3$/, "_subtitle.json");
+    await downloadSubtitle(subtitleFile, subtitleOutput);
+  }
+
   return outputFile;
 }
 
 /**
  * 轮询异步任务直到返回音频数据
  */
-async function pollTaskResult(apiKey: string, apiHost: string, taskId: string): Promise<string> {
+async function pollTaskResult(
+  apiKey: string, 
+  apiHost: string, 
+  taskId: string,
+  enableSubtitle: boolean = false,
+): Promise<{ audio: string; subtitleFile?: string }> {
   const maxRetries = 60;
 
   for (let i = 0; i < maxRetries; i++) {
@@ -338,7 +434,14 @@ async function pollTaskResult(apiKey: string, apiHost: string, taskId: string): 
       // 读取下载的音频文件并返回 base64
       const fileData = await Bun.file("/tmp/tts_async_result.mp3").arrayBuffer();
       const base64 = Buffer.from(fileData).toString("base64");
-      return base64;
+      
+      // 获取字幕文件链接（如果开启）
+      let subtitleFile: string | undefined;
+      if (enableSubtitle) {
+        subtitleFile = result.data?.extra_info?.subtitle_file;
+      }
+      
+      return { audio: base64, subtitleFile };
     } else if (status.toLowerCase() === "failed") {
       throw new MinimaxError("语音合成任务失败");
     }
@@ -358,53 +461,82 @@ function showHelp(): void {
   console.log("MiniMax 语音合成脚本");
   console.log("");
   console.log("用法: tts.ts <文本> [选项]");
+  console.log("   或: tts.ts --text-file <文件路径> [选项]");
   console.log("");
   console.log("选项:");
-  console.log("  -h, --help      显示此帮助信息");
-  console.log("  -o, --output    输出文件路径 (默认: output.mp3)");
-  console.log("  -v, --voice     音色ID (默认: female-tianmei)");
-  console.log("  -m, --model     语音模型 (默认: speech-2.8-hd)");
-  console.log("  -s, --speed     语速 0.5-2.0 (默认: 1.0)");
-  console.log("      --vol       音量 0-10 (默认: 10)");
-  console.log("  -p, --pitch     音调 0.5-2.0 (默认: 1.0)");
+  console.log("  -h, --help       显示此帮助信息");
+  console.log("  -f, --text-file  从文件读取文本（使用 - 从 stdin 读取）");
+  console.log("  -o, --output     输出文件路径 (默认: output.mp3)");
+  console.log("  -v, --voice      音色ID (默认: Chinese (Mandarin)_Reliable_Executive)");
+  console.log("  -m, --model      语音模型 (默认: speech-2.8-hd)");
+  console.log("  -s, --speed      语速 0.5-2.0 (默认: 1.0)");
+  console.log("      --vol        音量 0-10 (默认: 1)");
+  console.log("  -p, --pitch      音调 -12 到 12 的整数 (默认: 0)");
+  console.log("      --subtitle   同时生成字幕文件");
   console.log("");
   console.log("示例:");
   console.log('  bun run tts.ts "你好世界"');
   console.log('  bun run tts.ts "你好世界" -o hello.mp3 -v male-qn-qingse');
+  console.log('  bun run tts.ts --text-file script.txt -o output.mp3');
+  console.log('  echo "你好世界" | bun run tts.ts --text-file -');
   console.log('  bun run tts.ts "你好世界" --speed 1.2 --vol 8');
+  console.log('  bun run tts.ts "你好世界" -o hello.mp3 --subtitle');
 }
 
 // 解析命令行参数
 function parseArgs(): {
-  text: string;
+  text: string | null;
+  textFile: string | null;
   output: string;
   voice: string;
   model: string;
   speed: number;
   vol: number;
   pitch: number;
+  subtitle: boolean;
 } {
   const args = process.argv.slice(2);
 
   // 检查帮助标志
-  if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+  if (args.includes("-h") || args.includes("--help")) {
     showHelp();
-    process.exit(args.length === 0 ? 1 : 0);
+    process.exit(0);
   }
 
-  const text = args[0];
+  if (args.length === 0) {
+    showHelp();
+    process.exit(1);
+  }
+
+  let text: string | null = null;
+  let textFile: string | null = null;
   let output = "output.mp3";
   let voice = "Chinese (Mandarin)_Reliable_Executive";
   let model = "speech-2.8-hd";
   let speed = 1.0;
   let vol = 1;
   let pitch = 0;
+  let subtitle = false;
 
-  for (let i = 1; i < args.length; i++) {
+  for (let i = 0; i < args.length; i++) {
     const arg = args[i];
+
+    // 第一个非选项参数作为文本
+    if (!arg.startsWith("-")) {
+      if (text === null && textFile === null) {
+        text = arg;
+      }
+      continue;
+    }
+
     const nextArg = args[i + 1];
 
     switch (arg) {
+      case "-f":
+      case "--text-file":
+        textFile = nextArg;
+        i++;
+        break;
       case "-o":
       case "--output":
         output = nextArg;
@@ -429,7 +561,8 @@ function parseArgs(): {
         i++;
         break;
       case "--vol":
-        vol = parseInt(nextArg, 10) || 10;
+        vol = parseInt(nextArg, 10);
+        if (isNaN(vol)) vol = 1;
         if (vol < 0 || vol > 10) {
           throw new MinimaxError("音量必须在 0-10 之间");
         }
@@ -437,31 +570,55 @@ function parseArgs(): {
         break;
       case "-p":
       case "--pitch":
-        pitch = parseFloat(nextArg) || 1.0;
-        if (pitch < 0.5 || pitch > 2.0) {
-          throw new MinimaxError("音调必须在 0.5-2.0 之间");
+        pitch = parseInt(nextArg, 10);
+        if (isNaN(pitch)) pitch = 0;
+        if (pitch < -12 || pitch > 12) {
+          throw new MinimaxError("音调必须是 -12 到 12 之间的整数");
         }
         i++;
+        break;
+      case "--subtitle":
+        subtitle = true;
         break;
     }
   }
 
-  return { text, output, voice, model, speed, vol, pitch };
+  return { text, textFile, output, voice, model, speed, vol, pitch, subtitle };
 }
 
 // 主函数
 async function main(): Promise<void> {
   try {
-    const { text, output, voice, model, speed, vol, pitch } = parseArgs();
+    const { text, textFile, output, voice, model, speed, vol, pitch, subtitle } = parseArgs();
+
+    let finalText = text;
+
+    // 从文件或 stdin 读取文本
+    if (!finalText && textFile) {
+      if (textFile === "-") {
+        finalText = await Bun.stdin.text();
+      } else {
+        const file = Bun.file(textFile);
+        if (!(await file.exists())) {
+          throw new MinimaxError(`文本文件不存在: ${textFile}`);
+        }
+        finalText = await file.text();
+      }
+    }
+
+    if (!finalText || finalText.trim().length === 0) {
+      throw new MinimaxError("请提供要合成的文本，或使用 --text-file 指定文件");
+    }
 
     await textToSpeech({
-      text,
+      text: finalText.trim(),
       outputFile: output,
       voiceId: voice,
       model,
       speed,
       vol,
       pitch,
+      enableSubtitle: subtitle,
     });
   } catch (error) {
     if (error instanceof MinimaxError) {
